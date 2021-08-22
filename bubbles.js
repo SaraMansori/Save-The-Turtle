@@ -22,7 +22,7 @@ class Bubbles {
     }
 
     randomRadius() {
-        return Math.floor(Math.random() * 20 + 20);
+        return Math.floor(Math.random() * 30) + 10;
     }
 
     draw() {

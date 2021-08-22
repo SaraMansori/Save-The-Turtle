@@ -27,8 +27,8 @@ const game = {
     },
 
     setDimensions() {
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
+        this.width = window.innerWidth * 0.8;
+        this.height = window.innerHeight * 0.8;
         this.canvas.width = this.width;
         this.canvas.height = this.height;
     },
@@ -56,7 +56,7 @@ const game = {
             this.ctx,
             this.width,
             this.height,
-            "./img/bg.png"
+            "https://opengameart.org/sites/default/files/Preview_143.png"
         );
 
         this.player = new Player(this.ctx, this.width, this.height, this.keys);

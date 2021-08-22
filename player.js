@@ -2,15 +2,15 @@ class Player {
     constructor(ctx, gameWidth, gameHeight, keys) {
         this.ctx = ctx;
 
-        this.width = 100;
-        this.height = 150;
+        this.width = 80;
+        this.height = this.width;
 
         this.image = new Image();
-        this.image.src = "./img/player.png";
+        this.image.src = "./img/fish.png";
 
         //Frames of the player sprite
-        this.image.frames = 3;
-        this.image.framesIndex = 0;
+        //this.image.frames = 3;
+        //this.image.framesIndex = 0;
 
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
@@ -45,11 +45,11 @@ class Player {
         this.ctx.drawImage(
             this.image,
             // to manage the sprites
-            this.image.framesIndex *
-                Math.floor(this.image.width / this.image.frames),
-            0,
-            Math.floor(this.image.width / this.image.frames),
-            this.image.height,
+            // this.image.framesIndex *
+            //     Math.floor(this.image.width / this.image.frames),
+            // 0,
+            // Math.floor(this.image.width / this.image.frames),
+            // this.image.height,
             this.posX,
             this.posY,
             this.width,
@@ -86,7 +86,10 @@ class Player {
                     this.goDown();
                     break;
                 case this.keys.RIGHT:
-                    this.goDown();
+                    this.goRight();
+                    break;
+                case this.keys.LEFT:
+                    this.goLeft();
                     break;
                 case this.keys.SPACE:
                     this.shoot();
@@ -104,6 +107,18 @@ class Player {
     goDown() {
         if (this.posY < this.gameHeight - this.height - 50) {
             this.posY += 90;
+        }
+    }
+
+    goRight() {
+        if (this.posX < this.gameWidth - this.width - 50) {
+            this.posX += 90;
+        }
+    }
+
+    goLeft() {
+        if (this.posX > 0 + this.width + 50) {
+            this.posX -= 90;
         }
     }
 

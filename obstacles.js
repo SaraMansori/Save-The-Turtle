@@ -11,7 +11,7 @@ class Obstacle {
     }
 
     randomY() {
-        return Math.floor(Math.random() * this.gameHeigth + 10);
+        return Math.floor(Math.random() * (this.gameHeigth - this.height) + 10);
     }
 
     draw() {
@@ -36,7 +36,9 @@ class ObstacleFalling extends Obstacle {
     }
 
     randomX(gameWidth) {
-        return Math.floor(Math.random() * (gameWidth - 300) + 300);
+        return Math.floor(
+            Math.random() * (gameWidth - (this.width - 300)) + 300
+        );
     }
 
     fall() {
