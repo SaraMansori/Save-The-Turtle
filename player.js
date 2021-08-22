@@ -111,7 +111,7 @@ class Player {
     }
 
     goRight() {
-        if (this.posX < this.gameWidth - this.width - 50) {
+        if (this.posX < this.gameWidth - this.width - 100) {
             this.posX += 90;
         }
     }

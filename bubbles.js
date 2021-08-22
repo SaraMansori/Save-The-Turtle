@@ -15,6 +15,11 @@ class Bubbles {
         this.playerHeight = playerHeight;
         this.radius = this.randomRadius();
 
+        this.image = new Image();
+        this.image.src = "./img/bubble.png";
+        this.width = this.randomRadius();
+        this.height = this.width;
+
         this.velX = 10;
         this.velY = 0.2;
 
@@ -22,15 +27,28 @@ class Bubbles {
     }
 
     randomRadius() {
-        return Math.floor(Math.random() * 30) + 10;
+        return Math.floor(Math.random() * 40) + 30;
     }
 
     draw() {
-        this.ctx.beginPath();
-        this.ctx.fillStyle = "white";
-        this.ctx.arc(this.posX, this.posY, this.radius, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.closePath();
+        this.ctx.drawImage(
+            this.image,
+            // to manage the sprites
+            // this.image.framesIndex *
+            //     Math.floor(this.image.width / this.image.frames),
+            // 0,
+            // Math.floor(this.image.width / this.image.frames),
+            // this.image.height,
+            this.posX,
+            this.posY,
+            this.width,
+            this.height
+        );
+        // this.ctx.beginPath();
+        // //this.ctx.fillStyle = "white";
+        // this.ctx.arc(this.posX, this.posY, this.radius, 0, Math.PI * 2);
+        // this.ctx.fill();
+        // this.ctx.closePath();
         this.move();
     }
 
