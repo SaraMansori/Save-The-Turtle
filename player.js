@@ -26,6 +26,11 @@ class Player {
 
         this.bubbles = [];
 
+        this.movingLeft = false;
+        this.movingRight = false;
+        this.movingUp = false;
+        this.movingDown = false;
+
         this.setListeners();
     }
 
@@ -65,10 +70,29 @@ class Player {
     }
 
     move() {
+        //Floating
         if (this.posY < this.gameHeight - this.height && this.posY >= -100) {
             this.posY += this.velY;
-            //this.velY += this.gravity;
         }
+        //Going Right
+        if ((this.posX < this.gameWidth - this.width) && this.movingRight) {
+            this.posX += 10;
+        }
+        //Going Left
+        if ((this.posX > 0) && this.movingLeft) {
+            this.posX -= 10;
+        }
+        //Going Up
+        if (this.posY > 0 && this.movingUp) {
+            this.posY -= 8;
+        }
+        //Going Down
+        if ((this.posY < this.gameHeight - this.height) && this.movingDown) {
+            this.posY += 10;
+        }
+
+        //this.velY += this.gravity;
+
         // else {
         //     //this.posY = this.posY0;
         //     this.velY = 1;
@@ -80,20 +104,39 @@ class Player {
             //REVISE KEYCODE DEPRECATED
             switch (e.keyCode) {
                 case this.keys.UP:
-                    this.goUp();
+                    this.movingUp = true;
                     break;
                 case this.keys.DOWN:
-                    this.goDown();
+                    this.movingDown = true;
                     break;
                 case this.keys.RIGHT:
-                    this.goRight();
+                    this.movingRight = true;
                     break;
                 case this.keys.LEFT:
-                    this.goLeft();
+                    this.movingLeft = true;
                     break;
                 case this.keys.SPACE:
                     this.shoot();
                     break;
+            }
+        });
+
+        document.addEventListener("keyup", (e) => {
+            //REVISE KEYCODE DEPRECATED
+            switch (e.keyCode) {
+                case this.keys.RIGHT:
+                    this.movingRight = false;
+                    break;
+                case this.keys.LEFT:
+                    this.movingLeft = false;
+                    break;
+                case this.keys.UP:
+                    this.movingUp = false;
+                    break;
+                case this.keys.DOWN:
+                    this.movingDown = false;
+                    break;
+
             }
         });
     }
@@ -112,13 +155,13 @@ class Player {
 
     goRight() {
         if (this.posX < this.gameWidth - this.width - 100) {
-            this.posX += 90;
+            this.posX += 20;
         }
     }
 
     goLeft() {
         if (this.posX > 0 + this.width + 50) {
-            this.posX -= 90;
+            this.posX -= 20;
         }
     }
 

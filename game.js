@@ -54,21 +54,29 @@ const game = {
                 ? this.pointsBox.points++
                 : (this.pointsBox.points = this.pointsBox.points);
 
-            this.yearCounter > 15 ? (this.yearCounter = 0) : this.yearCounter++;
+            this.yearCounter > 900
+                ? (this.yearCounter = 0)
+                : this.yearCounter++;
 
-            this.yearCounter > 15 ? this.year++ : (this.year = this.year);
+            this.yearCounter > 900
+                ? this.levels.year++
+                : (this.levels.year = this.levels.year);
 
-            if (this.pointsCounter === 60) {
-                console.log("hola");
-            }
 
             this.clear();
             this.drawAll();
 
             this.generateObstacles();
+
+            if (this.isCollision()) {
+                this.life.decreaseHealth();
+            }
+
             this.clearObstacles();
 
-            this.updateLevels();
+
+
+            //this.updateLevels();
 
             // this.isCollision() ? this.gameOver() : null
         }, 1000 / this.FPS);
@@ -127,67 +135,57 @@ const game = {
     clearObstacles() {
         this.obstacles = this.obstacles.filter(
             (obs) =>
-                obs.posX + obs.width >= 0 ||
-                (this.player.posX < obs.posX + obs.width &&
-                    this.player.posX + this.player.width > obs.posX &&
-                    this.player.posY < obs.posY + obs.height &&
-                    this.player.posY + this.player.height > obs.posY)
+                obs.posX + obs.width >= 0 && !this.checkCollision(obs)
         );
         this.obstaclesFalling = this.obstaclesFalling.filter(
             (obs) => obs.posY <= this.height
         );
+
     },
 
-    updateLevels() {
-        if (this.framesCounter % 90 === 0) {
-            if (this.pointsBox.points > 15) {
-                this.levels.year++;
-            }
-        }
-    },
-
-    // checkCollision(player, obstacle) {
-    //     if (
-    //         player.x < obstacle.x + obstacle.width &&
-    //         player.x + player.width > obstacle.x &&
-    //         player.y < obstacle.y + obstacle.height &&
-    //         player.y + player.height > obstacle.y
-    //     ) {
-    //         this.obstacles.splice(indexOf(obstacle));
-    //         return true;
-    //     } else {
-    //         return false;
+    // updateLevels() {
+    //     if (this.framesCounter % 90 === 0) {
+    //         if (this.pointsBox.points > 15) {
+    //             this.levels.year++;
+    //         }
     //     }
     // },
 
-    // isCollision() {
-    //     return this.obstacles.some((obs) => {
-    //         const player = {
-    //             x: this.player.posX,
-    //             y: this.player.posY,
-    //             width: this.player.width,
-    //             height: this.player.height,
-    //         };
-    //         let obstacle = {
-    //             x: obs.posX,
-    //             y: obs.posY,
-    //             width: obs.width,
-    //             height: obs.height,
-    //         };
-    //         return (
-    //             player.x < obstacle.x + obstacle.width &&
-    //             player.x + player.width > obstacle.x &&
-    //             player.y < obstacle.y + obstacle.height &&
-    //             player.y + player.height > obstacle.y
-    //         );
-    //     });
+    checkCollision(obs) {
+        return (this.player.posX < obs.posX + obs.width &&
+            this.player.posX + this.player.width > obs.posX &&
+            this.player.posY < obs.posY + obs.height &&
+            this.player.posY + this.player.height > obs.posY)
+    },
 
-    //     // return this.obstacles.some((obs) => {
-    //     //     return (
-    //     //         this.player.posX + this.player.width === obs.posX ||
-    //     //         this.player.posX === obs.posX + obs.width
-    //     //     );
-    //     // });
-    //     //floatingObstaclesCollision || fallingObstaclesCollision ? true : false;
-    // },
+    isCollision() {
+        return this.obstacles.some((obs) => {
+            const player = {
+                x: this.player.posX,
+                y: this.player.posY,
+                width: this.player.width,
+                height: this.player.height,
+            };
+            let obstacle = {
+                x: obs.posX,
+                y: obs.posY,
+                width: obs.width,
+                height: obs.height,
+            };
+            return (
+                player.x < obstacle.x + obstacle.width &&
+                player.x + player.width > obstacle.x &&
+                player.y < obstacle.y + obstacle.height &&
+                player.y + player.height > obstacle.y
+            );
+        });
+
+        // return this.obstacles.some((obs) => {
+        //     return (
+        //         this.player.posX + this.player.width === obs.posX ||
+        //         this.player.posX === obs.posX + obs.width
+        //     );
+        // });
+        // floatingObstaclesCollision || fallingObstaclesCollision ? true : false;
+    },
 };
