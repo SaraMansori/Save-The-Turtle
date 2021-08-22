@@ -3,6 +3,7 @@ const game = {
     ctx: undefined,
     width: undefined,
     height: undefined,
+    barsPosY: 0,
     FPS: 60,
     framesCounter: 0,
     pointsCounter: 0,
@@ -44,8 +45,6 @@ const game = {
                 ? (this.framesCounter = 0)
                 : this.framesCounter++;
 
-            //console.log(this.framesCounter);
-
             this.pointsCounter > 50
                 ? (this.pointsCounter = 0)
                 : this.pointsCounter++;
@@ -81,6 +80,8 @@ const game = {
             this.height,
             this.points
         );
+        this.barsPosY = this.pointsBox.posY;
+        this.life = new Life(this.ctx, this.width, this.height, this.barsPosY);
     },
 
     clear() {
@@ -89,10 +90,11 @@ const game = {
 
     drawAll() {
         this.background.draw();
-        this.player.draw(this.framesCounter);
-        this.pointsBox.draw();
         this.obstacles.forEach((obs) => obs.draw());
         this.obstaclesFalling.forEach((obs) => obs.draw());
+        this.player.draw(this.framesCounter);
+        this.pointsBox.draw();
+        this.life.drawBar();
     },
 
     generateObstacles() {
@@ -100,18 +102,71 @@ const game = {
             this.obstacles.push(
                 new Obstacle(this.ctx, this.width, this.height)
             );
-            this.obstaclesFalling.push(
-                new ObstacleFalling(this.ctx, this.width, this.height)
-            );
+
+            if (this.pointsBox.points > 15) {
+                this.obstaclesFalling.push(
+                    new ObstacleFalling(this.ctx, this.width, this.height)
+                );
+            }
         }
     },
 
     clearObstacles() {
         this.obstacles = this.obstacles.filter(
-            (obs) => obs.posX + obs.width >= 0
+            (obs) =>
+                obs.posX + obs.width >= 0 ||
+                (this.player.posX < obs.posX + obs.width &&
+                    this.player.posX + this.player.width > obs.posX &&
+                    this.player.posY < obs.posY + obs.height &&
+                    this.player.posY + this.player.height > obs.posY)
         );
         this.obstaclesFalling = this.obstaclesFalling.filter(
             (obs) => obs.posY <= this.height
         );
     },
+
+    checkCollision(player, obstacle) {
+        if (
+            player.x < obstacle.x + obstacle.width &&
+            player.x + player.width > obstacle.x &&
+            player.y < obstacle.y + obstacle.height &&
+            player.y + player.height > obstacle.y
+        ) {
+            this.obstacles.splice(indexOf(obstacle));
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    // isCollision() {
+    //     return this.obstacles.some((obs) => {
+    //         const player = {
+    //             x: this.player.posX,
+    //             y: this.player.posY,
+    //             width: this.player.width,
+    //             height: this.player.height,
+    //         };
+    //         let obstacle = {
+    //             x: obs.posX,
+    //             y: obs.posY,
+    //             width: obs.width,
+    //             height: obs.height,
+    //         };
+    //         return (
+    //             player.x < obstacle.x + obstacle.width &&
+    //             player.x + player.width > obstacle.x &&
+    //             player.y < obstacle.y + obstacle.height &&
+    //             player.y + player.height > obstacle.y
+    //         );
+    //     });
+
+    //     // return this.obstacles.some((obs) => {
+    //     //     return (
+    //     //         this.player.posX + this.player.width === obs.posX ||
+    //     //         this.player.posX === obs.posX + obs.width
+    //     //     );
+    //     // });
+    //     //floatingObstaclesCollision || fallingObstaclesCollision ? true : false;
+    // },
 };

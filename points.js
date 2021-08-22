@@ -12,9 +12,8 @@ class Points {
     }
 
     draw() {
-        this.ctx.fillStyle = "white";
-        //CHANGE THE FONT TO PRESS START 2
-        //this.ctx.font = "48px serif";
+        this.ctx.textAlign = "left";
+        this.ctx.fillStyle = "black";
         this.ctx.font = "20px 'Press Start 2P'";
         this.ctx.fillText(`POINTS: ${this.points}`, this.posX, this.posY);
     }
