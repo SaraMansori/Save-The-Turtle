@@ -5,9 +5,12 @@ const game = {
     height: undefined,
     FPS: 60,
     framesCounter: 0,
+    pointsCounter: 0,
+    points: 0,
 
     background: undefined,
     player: undefined,
+    pointsBox: undefined,
     obstacles: [],
     obstaclesFalling: [],
 
@@ -41,6 +44,16 @@ const game = {
                 ? (this.framesCounter = 0)
                 : this.framesCounter++;
 
+            //console.log(this.framesCounter);
+
+            this.pointsCounter > 50
+                ? (this.pointsCounter = 0)
+                : this.pointsCounter++;
+
+            this.pointsCounter > 50
+                ? this.pointsBox.points++
+                : (this.pointsBox.points = this.pointsBox.points);
+
             this.clear();
             this.drawAll();
 
@@ -62,6 +75,12 @@ const game = {
         this.player = new Player(this.ctx, this.width, this.height, this.keys);
         this.obstacles = [];
         this.obstaclesFalling = [];
+        this.pointsBox = new Points(
+            this.ctx,
+            this.width,
+            this.height,
+            this.points
+        );
     },
 
     clear() {
@@ -71,6 +90,7 @@ const game = {
     drawAll() {
         this.background.draw();
         this.player.draw(this.framesCounter);
+        this.pointsBox.draw();
         this.obstacles.forEach((obs) => obs.draw());
         this.obstaclesFalling.forEach((obs) => obs.draw());
     },
