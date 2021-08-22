@@ -23,10 +23,9 @@ class Life {
         this.barHealth = 100;
     }
 
-    drawBar() {
+    draw() {
         this.ctx.fillStyle = this.barColor;
         this.ctx.fillRect(this.barX, this.barY, this.barWidth, this.barHeight);
-
         this.ctx.font = "20px 'Press Start 2P'";
         this.ctx.fillStyle = "#0095DD";
         this.ctx.textAlign = "center";

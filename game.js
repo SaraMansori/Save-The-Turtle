@@ -8,13 +8,14 @@ const game = {
     framesCounter: 0,
     pointsCounter: 0,
     points: 0,
-
     background: undefined,
     player: undefined,
     pointsBox: undefined,
+    levels: undefined,
+    yearCounter: 0,
+    year: 2021,
     obstacles: [],
     obstaclesFalling: [],
-
     keys: {
         UP: 38,
         DOWN: 40,
@@ -45,19 +46,29 @@ const game = {
                 ? (this.framesCounter = 0)
                 : this.framesCounter++;
 
-            this.pointsCounter > 50
+            this.pointsCounter > 60
                 ? (this.pointsCounter = 0)
                 : this.pointsCounter++;
 
-            this.pointsCounter > 50
+            this.pointsCounter > 60
                 ? this.pointsBox.points++
                 : (this.pointsBox.points = this.pointsBox.points);
+
+            this.yearCounter > 15 ? (this.yearCounter = 0) : this.yearCounter++;
+
+            this.yearCounter > 15 ? this.year++ : (this.year = this.year);
+
+            if (this.pointsCounter === 60) {
+                console.log("hola");
+            }
 
             this.clear();
             this.drawAll();
 
             this.generateObstacles();
             this.clearObstacles();
+
+            this.updateLevels();
 
             // this.isCollision() ? this.gameOver() : null
         }, 1000 / this.FPS);
@@ -82,6 +93,7 @@ const game = {
         );
         this.barsPosY = this.pointsBox.posY;
         this.life = new Life(this.ctx, this.width, this.height, this.barsPosY);
+        this.levels = new Levels(this.ctx, this.width, this.height, this.year);
     },
 
     clear() {
@@ -94,7 +106,8 @@ const game = {
         this.obstaclesFalling.forEach((obs) => obs.draw());
         this.player.draw(this.framesCounter);
         this.pointsBox.draw();
-        this.life.drawBar();
+        this.life.draw();
+        this.levels.draw();
     },
 
     generateObstacles() {
@@ -125,19 +138,27 @@ const game = {
         );
     },
 
-    checkCollision(player, obstacle) {
-        if (
-            player.x < obstacle.x + obstacle.width &&
-            player.x + player.width > obstacle.x &&
-            player.y < obstacle.y + obstacle.height &&
-            player.y + player.height > obstacle.y
-        ) {
-            this.obstacles.splice(indexOf(obstacle));
-            return true;
-        } else {
-            return false;
+    updateLevels() {
+        if (this.framesCounter % 90 === 0) {
+            if (this.pointsBox.points > 15) {
+                this.levels.year++;
+            }
         }
     },
+
+    // checkCollision(player, obstacle) {
+    //     if (
+    //         player.x < obstacle.x + obstacle.width &&
+    //         player.x + player.width > obstacle.x &&
+    //         player.y < obstacle.y + obstacle.height &&
+    //         player.y + player.height > obstacle.y
+    //     ) {
+    //         this.obstacles.splice(indexOf(obstacle));
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // },
 
     // isCollision() {
     //     return this.obstacles.some((obs) => {
