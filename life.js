@@ -1,10 +1,5 @@
 class Life {
-    constructor(
-        ctx,
-        gameWidth,
-        gameHeight,
-        barsPosY,
-    ) {
+    constructor(ctx, gameWidth, gameHeight, barsPosY) {
         this.ctx = ctx;
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
@@ -24,17 +19,22 @@ class Life {
         this.ctx.fillRect(this.posX, this.posY, this.barWidth, this.barHeight);
         this.ctx.font = "20px 'Press Start 2P'";
         this.ctx.fillStyle = "black";
-        this.ctx.strokeRect(this.posX, this.posY, this.barMaxWidth, this.barHeight)
+        this.ctx.strokeRect(
+            this.posX,
+            this.posY,
+            this.barMaxWidth,
+            this.barHeight
+        );
         this.ctx.textAlign = "center";
         this.ctx.fillText(
-            'HEALTH: ' + this.health + '%',
+            "HEALTH: " + this.health + "%",
             this.textX,
             this.posY + this.barHeight
         );
     }
 
-    decreaseHealth() {
-        this.health -= 10;
+    decreaseHealth(damage) {
+        this.health -= damage;
         this.barWidth = (this.health / this.maxHealth) * this.barMaxWidth;
     }
-};
+}

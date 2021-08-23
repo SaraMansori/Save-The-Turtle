@@ -9,8 +9,8 @@ class Obstacle {
         this.posY = this.randomY();
         this.velX = 5;
 
-        this.image = new Image()
-        this.image.src = './img/can.png'
+        this.image = new Image();
+        this.image.src = "./img/can.png";
     }
 
     randomY() {
@@ -18,7 +18,13 @@ class Obstacle {
     }
 
     draw() {
-        this.ctx.drawImage(this.image, this.posX, this.posY, this.width, this.height);
+        this.ctx.drawImage(
+            this.image,
+            this.posX,
+            this.posY,
+            this.width,
+            this.height
+        );
         this.move();
     }
 
@@ -33,15 +39,17 @@ class ObstacleFalling extends Obstacle {
 
         this.posX = this.randomX(this.gameWidth);
         this.posY = 0;
-        this.velY = 3;
+        this.height = 80;
+        this.width = this.height;
+        this.velY = 2;
         this.gravity = 0.2;
 
-        this.image = new Image()
-        this.image.src = './img/trash.png'
+        this.image = new Image();
+        this.image.src = "./img/trash.png";
     }
 
     randomX(gameWidth) {
-        return Math.floor(Math.random() * (gameWidth - (this.width - 300)));
+        return Math.floor(Math.random() * (gameWidth - this.width));
     }
 
     fall() {
@@ -50,7 +58,13 @@ class ObstacleFalling extends Obstacle {
     }
 
     draw() {
-        this.ctx.drawImage(this.image, this.posX, this.posY, this.width, this.height);
+        this.ctx.drawImage(
+            this.image,
+            this.posX,
+            this.posY,
+            this.width,
+            this.height
+        );
         //this.ctx.fillStyle = "green";
         // this.ctx.fillRect(this.posX, this.posY, this.width, this.height);
         this.fall();

@@ -23,7 +23,7 @@ const game = {
     obstacles: [],
     obstaclesFalling: [],
     enemies: [],
-    
+
     keys: {
         UP: 38,
         DOWN: 40,
@@ -72,7 +72,6 @@ const game = {
                 ? (this.yearCounter = 0)
                 : this.yearCounter++;
 
-
             //Each 15 seconds the levels year increases by 1
             this.yearCounter > 900
                 ? this.levels.year++
@@ -88,28 +87,35 @@ const game = {
             this.generateObstacles();
 
             //Generates Enemies
-            this.generateEnemies()
+            this.generateEnemies();
 
             //Checks collision and decreases health if isCollision === true
             if (this.isCollision()) {
-                this.life.decreaseHealth();
-            };
+                this.life.decreaseHealth(10);
+                this.player.changeStatus("small");
+            }
 
-             //Checks collision and decreases health if isCollision === true for the falling obstacles
+            //Checks collision and decreases health if isCollision === true for the falling obstacles
             if (this.isCollisionFalling()) {
-                this.life.decreaseHealth();
-            };
+                this.life.decreaseHealth(20);
+                this.playerStatus = "small";
+            }
 
-             //Checks collision and decreases health if isCollision === true for the falling obstacles
+            if (this.isCollisionEnemy()) {
+                this.life.decreaseHealth(1);
+                this.playerStatus = "small";
+            }
 
-            if (this.life.health === 0){
+            //Checks collision and decreases health if isCollision === true for the falling obstacles
+
+            if (this.life.health <= 0) {
                 this.gameEnd();
             }
 
             //Clears obstacles that have been hit and the ones that are outside the screen
             this.clearObstacles();
-
-        }, 1000/this.FPS);
+            this.clearEnemies();
+        }, 1000 / this.FPS);
     },
 
     reset() {
@@ -117,8 +123,7 @@ const game = {
             this.ctx,
             this.width,
             this.height,
-            //"https://opengameart.org/sites/default/files/Preview_143.png"
-            "./img/background-seamless.jpg",
+            "./img/background-seamless.jpg"
         );
         this.player = new Player(this.ctx, this.width, this.height, this.keys);
         this.obstacles = [];
@@ -132,7 +137,7 @@ const game = {
         this.barsPosY = this.pointsBox.posY;
         this.life = new Life(this.ctx, this.width, this.height, this.barsPosY);
         this.levels = new Levels(this.ctx, this.width, this.height, this.year);
-        this.gameOver = new GameOver(this.ctx, this.width, this.height)
+        this.gameOver = new GameOver(this.ctx, this.width, this.height);
     },
 
     clear() {
@@ -168,11 +173,21 @@ const game = {
         if (this.framesCounter % 300 === 0) {
             if (this.pointsBox.points > 10) {
                 this.enemies.push(
-                    new Enemies(this.ctx, this.width, this.height, this.player.posX, this.player.posY, this.player.width, this.player.height)
+                    new Enemies(
+                        this.ctx,
+                        this.width,
+                        this.height,
+                        this.player.posX,
+                        this.player.posY,
+                        this.player.width,
+                        this.player.height
+                    )
                 );
             }
         }
     },
+
+    //CLEARING
 
     clearObstacles() {
         this.obstacles = this.obstacles.filter(
@@ -182,6 +197,14 @@ const game = {
             (obs) => obs.posY <= this.height && !this.checkCollision(obs)
         );
     },
+
+    clearEnemies() {
+        this.enemies = this.enemies.filter(
+            (enemy) => enemy.posX + enemy.width >= 0
+        );
+    },
+
+    //COLLISIONS
 
     checkCollision(obs) {
         return (
@@ -238,10 +261,62 @@ const game = {
         });
     },
 
-    gameEnd(){
+    isCollisionEnemy() {
+        return this.enemies.some((projectile) => {
+            const player = {
+                x: this.player.posX,
+                y: this.player.posY,
+                width: this.player.width,
+                height: this.player.height,
+            };
+            let projectileAcid = {
+                x: projectile.posX,
+                y: projectile.posY,
+                width: projectile.width,
+                height: projectile.height,
+            };
+
+            return (
+                player.x < projectileAcid.x + projectileAcid.width &&
+                player.x + player.width > projectileAcid.x &&
+                player.y < projectileAcid.y + projectileAcid.height &&
+                player.y + player.height > projectileAcid.y
+            );
+        });
+    },
+
+    // isCollisionAcid() {
+    //     for (let i = 0; i < this.enemies.length; i++) {
+    //         return this.enemies[i].acid.some((projectile) => {
+    //             const player = {
+    //                 x: this.player.posX,
+    //                 y: this.player.posY,
+    //                 width: this.player.width,
+    //                 height: this.player.height,
+    //             };
+    //             let projectileAcid = {
+    //                 x: projectile.posX,
+    //                 y: projectile.posY,
+    //                 width: projectile.width,
+    //                 height: projectile.height,
+    //             };
+
+    //             return (
+    //                 player.x < projectileAcid.x + projectileAcid.width &&
+    //                 player.x + player.width > projectileAcid.x &&
+    //                 player.y < projectileAcid.y + projectileAcid.height &&
+    //                 player.y + player.height > projectileAcid.y
+    //             );
+    //         });
+    //     }
+    // },
+
+    gameEnd() {
         clearInterval(this.interval);
-        this.clear()
-        this.drawAll()
+        this.life.health = 0;
+        this.life.barWidth = 0;
+        this.clear();
+        this.drawAll();
         this.gameOver.draw();
-    }
+    },
 };
