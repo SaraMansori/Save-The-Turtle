@@ -39,4 +39,4 @@ class Life {
     decreaseHealth() {
         this.barHealth -= 10;
     }
-}
+};

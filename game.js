@@ -70,6 +70,10 @@ const game = {
 
             if (this.isCollision()) {
                 this.life.decreaseHealth();
+            } 
+            
+            if (this.life.barHealth === 0){
+                this.gameOver();
             }
 
             this.clearObstacles();
@@ -188,4 +192,10 @@ const game = {
         // });
         // floatingObstaclesCollision || fallingObstaclesCollision ? true : false;
     },
+
+    gameOver(){
+        clearInterval(this.interval);
+        alert('GAME OVER');
+        console.log('game over');
+    }
 };
