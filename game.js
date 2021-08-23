@@ -7,7 +7,7 @@ const game = {
     barsPosY: 0,
     FPS: 60,
     framesCounter: 0,
-    pointsCounter: 0,
+    secondsCounter: 0,
     points: 0,
 
     background: undefined,
@@ -53,17 +53,17 @@ const game = {
             //SACAR A FUNCIONES
 
             //To refresh the animation sprite
-            this.framesCounter > 5000
+            this.framesCounter > 6000
                 ? (this.framesCounter = 0)
                 : this.framesCounter++;
 
             //Each second the counter resets
-            this.pointsCounter > 60
-                ? (this.pointsCounter = 0)
-                : this.pointsCounter++;
+            this.secondsCounter > 60
+                ? (this.secondsCounter = 0)
+                : this.secondsCounter++;
 
             //Each second a point is added to the PointsBox
-            this.pointsCounter > 60
+            this.secondsCounter > 60
                 ? this.pointsBox.points++
                 : (this.pointsBox.points = this.pointsBox.points);
 
@@ -93,13 +93,14 @@ const game = {
             //Checks collision and decreases health if isCollision === true
             if (this.isCollision()) {
                 this.life.decreaseHealth();
-                console.log('decreasing health!')
             };
-            
+
+             //Checks collision and decreases health if isCollision === true for the falling obstacles
             if (this.isCollisionFalling()) {
                 this.life.decreaseHealth();
-                console.log('decreasing health!')
             };
+
+             //Checks collision and decreases health if isCollision === true for the falling obstacles
 
             if (this.life.health === 0){
                 this.gameEnd();
@@ -116,7 +117,8 @@ const game = {
             this.ctx,
             this.width,
             this.height,
-            "https://opengameart.org/sites/default/files/Preview_143.png"
+            //"https://opengameart.org/sites/default/files/Preview_143.png"
+            "./img/background-seamless.jpg",
         );
         this.player = new Player(this.ctx, this.width, this.height, this.keys);
         this.obstacles = [];
@@ -166,7 +168,7 @@ const game = {
         if (this.framesCounter % 300 === 0) {
             if (this.pointsBox.points > 10) {
                 this.enemies.push(
-                    new Enemies(this.ctx, this.width, this.height)
+                    new Enemies(this.ctx, this.width, this.height, this.player.posX, this.player.posY, this.player.width, this.player.height)
                 );
             }
         }
