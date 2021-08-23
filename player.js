@@ -99,7 +99,7 @@ class Player {
     }
 
     goUp() {
-        if (this.posY > 0) {
+        if (this.posY > 0 + this.height) {
             this.posY -= 90;
         }
     }

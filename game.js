@@ -8,6 +8,8 @@ const game = {
 
     background: undefined,
     player: undefined,
+    life: undefined,
+
     obstacles: [],
     obstaclesFalling: [],
 
@@ -58,8 +60,8 @@ const game = {
             this.height,
             "https://opengameart.org/sites/default/files/Preview_143.png"
         );
-
         this.player = new Player(this.ctx, this.width, this.height, this.keys);
+        this.life = new Life(this.ctx, this.width, this.height);
         this.obstacles = [];
         this.obstaclesFalling = [];
     },
@@ -71,6 +73,7 @@ const game = {
     drawAll() {
         this.background.draw();
         this.player.draw(this.framesCounter);
+        this.life.drawBar();
         this.obstacles.forEach((obs) => obs.draw());
         this.obstaclesFalling.forEach((obs) => obs.draw());
     },
@@ -83,7 +86,7 @@ const game = {
             this.obstaclesFalling.push(
                 new ObstacleFalling(this.ctx, this.width, this.height)
             );
-        }
+        };
     },
 
     clearObstacles() {
