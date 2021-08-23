@@ -90,21 +90,36 @@ const game = {
             this.generateEnemies();
 
             //Checks collision and decreases health if isCollision === true
-            if (this.isCollision()) {
-                this.life.decreaseHealth(10);
-                this.player.changeStatus("small");
-            }
+            if (this.isCollision()) { 
+                if (this.player.status === "medium") {
+                    this.player.changeStatus("small");
+                } else if (this.player.status === "big") {
+                    this.player.changeStatus("medium");
+                } else if (this.player.status === "small") {
+                    this.life.decreaseHealth(10);
+                };
+            };
 
             //Checks collision and decreases health if isCollision === true for the falling obstacles
             if (this.isCollisionFalling()) {
-                this.life.decreaseHealth(20);
-                this.playerStatus = "small";
-            }
+                if (this.player.status === "medium") {
+                    this.player.changeStatus("small");
+                } else if (this.player.status === "big") {
+                    this.player.changeStatus("medium");
+                } else if (this.player.status === "small") {
+                    this.life.decreaseHealth(20);
+                };
+            };
 
             if (this.isCollisionEnemy()) {
-                this.life.decreaseHealth(1);
-                this.playerStatus = "small";
-            }
+                if (this.player.status === "medium") {
+                    this.player.changeStatus("small");
+                } else if (this.player.status === "big") {
+                    this.player.changeStatus("medium");
+                } else if (this.player.status === "small") {
+                    this.life.decreaseHealth(1);
+                };
+            };
 
             //Checks collision and decreases health if isCollision === true for the falling obstacles
 
