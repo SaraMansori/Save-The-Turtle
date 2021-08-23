@@ -3,6 +3,7 @@ class Life {
         ctx,
         gameWidth,
         gameHeight,
+        barsPosY,
         barWidth,
         barHeight,
         barX,
@@ -15,19 +16,27 @@ class Life {
         this.gameHeight = gameHeight;
         this.barWidth = 400;
         this.barHeight = 25;
-        this.barX = (this.gameWidth / 2) - (this.barWidth / 2);
-        this.barY = 20;
-        this.barColor = 'cyan';
-        this.barHealth = 100
-    };
+        this.barX = this.gameWidth / 2 - this.barWidth / 2;
+        this.barY = barsPosY - this.barHeight;
+        this.textX = this.gameWidth / 2;
+        this.barColor = "cyan";
+        this.barHealth = 100;
+    }
 
-    drawBar() {
+    draw() {
         this.ctx.fillStyle = this.barColor;
         this.ctx.fillRect(this.barX, this.barY, this.barWidth, this.barHeight);
-        this.ctx.font = "16px Sans-serif";
+        this.ctx.font = "20px 'Press Start 2P'";
         this.ctx.fillStyle = "#0095DD";
-        this.ctx.fillText(this.barHealth + "/100", this.barX + 170, this.barY + this.barY);
-        this.ctx.arc(25, 25, 50, 2, 2 * Math.PI);
-        
-    };
-};
+        this.ctx.textAlign = "center";
+        this.ctx.fillText(
+            this.barHealth + "/100",
+            this.textX,
+            this.barY + this.barHeight
+        );
+    }
+
+    decreaseHealth() {
+        this.barHealth -= 10;
+    }
+}

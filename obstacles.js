@@ -36,9 +36,7 @@ class ObstacleFalling extends Obstacle {
     }
 
     randomX(gameWidth) {
-        return Math.floor(
-            Math.random() * (gameWidth - (this.width - 300)) + 300
-        );
+        return Math.floor(Math.random() * (gameWidth - (this.width - 300)));
     }
 
     fall() {
