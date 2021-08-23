@@ -90,13 +90,6 @@ class Player {
         if ((this.posY < this.gameHeight - this.height) && this.movingDown) {
             this.posY += 10;
         }
-
-        //this.velY += this.gravity;
-
-        // else {
-        //     //this.posY = this.posY0;
-        //     this.velY = 1;
-        // }
     }
 
     setListeners() {
@@ -139,30 +132,6 @@ class Player {
 
             }
         });
-    }
-
-    goUp() {
-        if (this.posY > 0 + this.height) {
-            this.posY -= 90;
-        }
-    }
-
-    goDown() {
-        if (this.posY < this.gameHeight - this.height - 50) {
-            this.posY += 90;
-        }
-    }
-
-    goRight() {
-        if (this.posX < this.gameWidth - this.width - 100) {
-            this.posX += 20;
-        }
-    }
-
-    goLeft() {
-        if (this.posX > 0 + this.width + 50) {
-            this.posX -= 20;
-        }
     }
 
     shoot() {
