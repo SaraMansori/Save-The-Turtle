@@ -106,6 +106,12 @@ const game = {
                 this.playerStatus = "small";
             }
 
+            //console.log(this.isCollisionAcid());
+
+            if (this.enemies.length > 0) {
+                console.log(this.isCollisionAcid());
+            }
+
             //Checks collision and decreases health if isCollision === true for the falling obstacles
 
             if (this.life.health <= 0) {
@@ -261,55 +267,71 @@ const game = {
         });
     },
 
-    isCollisionEnemy() {
-        return this.enemies.some((projectile) => {
+    isCollisionEnemy(enemies) {
+        return this.enemies.some((enemy) => {
             const player = {
                 x: this.player.posX,
                 y: this.player.posY,
                 width: this.player.width,
                 height: this.player.height,
             };
-            let projectileAcid = {
-                x: projectile.posX,
-                y: projectile.posY,
-                width: projectile.width,
-                height: projectile.height,
+            let enemyFish = {
+                x: enemy.posX,
+                y: enemy.posY,
+                width: enemy.width,
+                height: enemy.height,
             };
 
             return (
-                player.x < projectileAcid.x + projectileAcid.width &&
-                player.x + player.width > projectileAcid.x &&
-                player.y < projectileAcid.y + projectileAcid.height &&
-                player.y + player.height > projectileAcid.y
+                player.x < enemyFish.x + enemyFish.width &&
+                player.x + player.width > enemyFish.x &&
+                player.y < enemyFish.y + enemyFish.height &&
+                player.y + player.height > enemyFish.y
             );
         });
     },
 
-    // isCollisionAcid() {
-    //     for (let i = 0; i < this.enemies.length; i++) {
-    //         return this.enemies[i].acid.some((projectile) => {
-    //             const player = {
-    //                 x: this.player.posX,
-    //                 y: this.player.posY,
-    //                 width: this.player.width,
-    //                 height: this.player.height,
-    //             };
-    //             let projectileAcid = {
-    //                 x: projectile.posX,
-    //                 y: projectile.posY,
-    //                 width: projectile.width,
-    //                 height: projectile.height,
-    //             };
+    isCollisionAcid() {
+        this.enemies.forEach((enemy) => {
+            return enemy.acidBullets.some((acid) => {
+                const player = {
+                    x: this.player.posX,
+                    y: this.player.posY,
+                    width: this.player.width,
+                    height: this.player.height,
+                };
 
-    //             return (
-    //                 player.x < projectileAcid.x + projectileAcid.width &&
-    //                 player.x + player.width > projectileAcid.x &&
-    //                 player.y < projectileAcid.y + projectileAcid.height &&
-    //                 player.y + player.height > projectileAcid.y
-    //             );
-    //         });
-    //     }
-    // },
+                let acidBullet = {
+                    x: acid.posX,
+                    y: acid.posY,
+                    width: acid.width,
+                    height: acid.height,
+                };
+
+                return (
+                    player.x < acidBullet.x + acidBullet.width &&
+                    player.x + player.width > acidBullet.x &&
+                    player.y < acidBullet.y + acidBullet.height &&
+                    player.y + player.height > acidBullet.y
+                );
+            });
+        });
+
+        // return (
+        //     this.enemies.filter((enemy) => {
+        //         return (
+        //             enemy.acid.filter((acid) => {
+        //                 return (
+        //                     this.player.posX < acid.posX + acid.width &&
+        //                     this.player.posX + this.player.width > acid.posX &&
+        //                     this.player.posY < acid.posY + acid.height &&
+        //                     this.player.posY + this.player.height > acid.posY
+        //                 );
+        //             }).length > 0
+        //         );
+        //     }).length > 0
+        // );
+    },
 
     gameEnd() {
         clearInterval(this.interval);
