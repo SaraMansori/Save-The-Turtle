@@ -1,25 +1,31 @@
 class Player {
-    constructor(ctx, gameWidth, gameHeight, keys) {
+    constructor(ctx, gameWidth, gameHeight, keys, framesCounter) {
         this.ctx = ctx;
 
         //SIZE
         this.status = "medium";
 
         //MEDIUM
-        this.width = 80;
-        this.height = this.width;
+        this.width = 100;
+        this.height = this.width / 1.5;
 
         //SMALL
-        this.widthS = 60;
-        this.heightS = this.widthS;
+        this.widthS = 80;
+        this.heightS = this.widthS / 1.5;
 
-        //BIG
-        this.widthL = 100;
-        this.heightL = this.widthL;
+        //LARGE
+        this.widthL = 120;
+        this.heightL = this.widthL / 1.5;
 
-        //IMAGE
+        //IMAGES
         this.image = new Image();
-        this.image.src = "./img/fish.png";
+        this.image.src = "./img/player/turtle.png";
+
+        this.imageS = new Image();
+        this.image.src = "./img/player/turtle-shield.png";
+
+        this.imageL = new Image();
+        this.image.src = "./img/player/turtle-shield2.png";
 
         //Frames of the player sprite
         //this.image.frames = 3;
@@ -34,6 +40,8 @@ class Player {
 
         //BUBBLES ATTACK
         this.bubbles = [];
+        this.framesCounter = framesCounter;
+        this.canShoot = true;
 
         //MOVEMENT
         this.keys = keys;
@@ -70,16 +78,16 @@ class Player {
                 break;
             case "small":
                 this.ctx.drawImage(
-                    this.image,
+                    this.imageS,
                     this.posX,
                     this.posY,
                     this.widthS,
                     this.heightS
                 );
                 break;
-            case "big":
+            case "large":
                 this.ctx.drawImage(
-                    this.image,
+                    this.imageL,
                     this.posX,
                     this.posY,
                     this.widthL,
@@ -145,7 +153,13 @@ class Player {
                     this.movingLeft = true;
                     break;
                 case this.keys.SPACE:
-                    this.shoot();
+                    if (this.canShoot) {
+                        this.shoot();
+                    }
+
+                    // if (this.framesCounter % 2 === 0) {
+                    //     this.canShoot = true;
+                    // }
                     break;
             }
         });
@@ -190,5 +204,31 @@ class Player {
 
     changeStatus(status) {
         this.status = status;
+    }
+
+    enlarge(status) {
+        switch (status) {
+            case "small":
+                this.status = "medium";
+                break;
+            case "medium":
+                this.status = "large";
+                break;
+            case "large":
+                this.status = "large";
+        }
+    }
+
+    makeSmall(status) {
+        switch (status) {
+            case "small":
+                this.status = "small";
+                break;
+            case "medium":
+                this.status = "small";
+                break;
+            case "large":
+                this.status = "medium";
+        }
     }
 }

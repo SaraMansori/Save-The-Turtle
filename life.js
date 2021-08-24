@@ -37,4 +37,13 @@ class Life {
         this.health -= damage;
         this.barWidth = (this.health / this.maxHealth) * this.barMaxWidth;
     }
+
+    increaseHealth(health) {
+        if (this.health + health > 100) {
+            this.health = 100;
+        } else {
+            this.health += health;
+        }
+        this.barWidth = (this.health / this.maxHealth) * this.barMaxWidth;
+    }
 }

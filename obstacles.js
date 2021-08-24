@@ -1,20 +1,25 @@
 class Obstacle {
-    constructor(ctx, gameWidth, gameHeigth) {
+    constructor(ctx, gameWidth, gameHeight) {
         this.ctx = ctx;
-        this.height = 50;
-        this.width = this.height * 1.5;
-        this.gameHeigth = gameHeigth;
+        this.height = 120;
+        this.width = this.height / 1.5;
+        this.gameHeight = gameHeight;
         this.gameWidth = gameWidth;
         this.posX = gameWidth;
         this.posY = this.randomY();
         this.velX = 5;
 
         this.image = new Image();
-        this.image.src = "./img/can.png";
+        this.image.src = this.randomImage();
     }
 
     randomY() {
-        return Math.floor(Math.random() * (this.gameHeigth - this.height) + 10);
+        return Math.floor(Math.random() * (this.gameHeight - this.height) + 10);
+    }
+
+    randomImage() {
+        let i = Math.floor(Math.random() * game.obstaclesImages.length);
+        return game.obstaclesImages[i];
     }
 
     draw() {
@@ -34,12 +39,12 @@ class Obstacle {
 }
 
 class ObstacleFalling extends Obstacle {
-    constructor(ctx, width, height, gameHeigth, posX, posY, velX) {
-        super(ctx, width, height, gameHeigth, posX, posY, velX);
+    constructor(ctx, width, height, gameHeight, posX, posY, velX) {
+        super(ctx, width, height, gameHeight, posX, posY, velX);
 
         this.posX = this.randomX(this.gameWidth);
         this.posY = 0;
-        this.height = 80;
+        this.height = 100;
         this.width = this.height;
         this.velY = 2;
         this.gravity = 0.2;

@@ -23,6 +23,22 @@ const game = {
     obstacles: [],
     obstaclesFalling: [],
     enemies: [],
+    acidBullets: [],
+    powerUps: [],
+
+    //GRAPHICS
+
+    enemiesImages: [
+        "./img/enemies/enemy.png",
+        "./img/enemies/enemy2.png",
+        "./img/enemies/enemy3.png",
+    ],
+
+    obstaclesImages: [
+        "./img/trash/barrel1.png",
+        "./img/trash/bottle1.png",
+        "./img/trash/bottle2.png",
+    ],
 
     keys: {
         UP: 38,
@@ -85,46 +101,56 @@ const game = {
 
             //Generates the obstacles floating and falling
             this.generateObstacles();
+            this.generateObstaclesFalling();
 
             //Generates Enemies
             this.generateEnemies();
 
+            this.generatePowerUps();
+
             //Checks collision and decreases health if isCollision === true
-            if (this.isCollision()) { 
-                if (this.player.status === "medium") {
-                    this.player.changeStatus("small");
-                } else if (this.player.status === "big") {
-                    this.player.changeStatus("medium");
-                } else if (this.player.status === "small") {
+
+            if (this.isCollision()) {
+                if (this.player.status === "small") {
                     this.life.decreaseHealth(10);
-                };
-            };
+                }
+                this.player.makeSmall(this.player.status);
+            }
 
             //Checks collision and decreases health if isCollision === true for the falling obstacles
             if (this.isCollisionFalling()) {
-                if (this.player.status === "medium") {
-                    this.player.changeStatus("small");
-                } else if (this.player.status === "big") {
-                    this.player.changeStatus("medium");
-                } else if (this.player.status === "small") {
+                this.player.makeSmall(this.player.status);
+                if (this.player.status === "small") {
                     this.life.decreaseHealth(20);
-                };
-            };
+                }
+            }
 
             if (this.isCollisionEnemy()) {
-                if (this.player.status === "medium") {
-                    this.player.changeStatus("small");
-                } else if (this.player.status === "big") {
-                    this.player.changeStatus("medium");
-                } else if (this.player.status === "small") {
+                this.player.makeSmall(this.player.status);
+                if (this.player.status === "small") {
                     this.life.decreaseHealth(1);
-                };
-            };
+                }
+            }
 
-            //console.log(this.isCollisionAcid());
+            if (this.isCollisionAcid()) {
+                this.player.makeSmall(this.player.status);
+                this.life.decreaseHealth(25);
+                this.enemies.forEach((enemy) => enemy.clearAcid());
+            }
 
-            if (this.enemies.length > 0) {
-                console.log(this.isCollisionAcid());
+            this.isCollisionBubbles(this.obstacles)
+                ? this.pointsBox.points++
+                : null;
+            this.isCollisionBubbles(this.obstaclesFalling)
+                ? (this.pointsBox.points += 20)
+                : null;
+            this.isCollisionBubbles(this.enemies)
+                ? (this.pointsBox.points += 15)
+                : null;
+
+            if (this.isCollisionPowerUp(this.powerUps)) {
+                this.life.increaseHealth(15);
+                this.player.enlarge(this.player.status);
             }
 
             //Checks collision and decreases health if isCollision === true for the falling obstacles
@@ -133,9 +159,12 @@ const game = {
                 this.gameEnd();
             }
 
-            //Clears obstacles that have been hit and the ones that are outside the screen
+            //console.log(this.powerUps);
+
+            //Clears obstacles that have been hit and the ones that are outside the screen and powerUps
             this.clearObstacles();
             this.clearEnemies();
+            this.clearPowerUps();
         }, 1000 / this.FPS);
     },
 
@@ -146,9 +175,16 @@ const game = {
             this.height,
             "./img/background-seamless.jpg"
         );
-        this.player = new Player(this.ctx, this.width, this.height, this.keys);
+        this.player = new Player(
+            this.ctx,
+            this.width,
+            this.height,
+            this.keys,
+            this.framesCounter
+        );
         this.obstacles = [];
         this.obstaclesFalling = [];
+        this.powerUps = [];
         this.pointsBox = new Points(
             this.ctx,
             this.width,
@@ -169,26 +205,86 @@ const game = {
         this.background.draw();
         this.obstacles.forEach((obs) => obs.draw());
         this.enemies.forEach((enemy) => enemy.draw());
+        this.acidBullets.forEach((bullet) => bullet.draw());
         this.obstaclesFalling.forEach((obs) => obs.draw());
+        this.powerUps.forEach((powerUp) => powerUp.draw());
         this.player.draw(this.framesCounter);
         this.pointsBox.draw();
         this.life.draw();
         this.levels.draw();
     },
 
-    generateObstacles() {
-        if (this.framesCounter % 90 === 0) {
-            this.obstacles.push(
-                new Obstacle(this.ctx, this.width, this.height)
-            );
+    difficulty(level) {
+        switch (level) {
+            case 1:
+                return 200;
+                break;
+            case 2:
+                return 90;
+                break;
+            case 3:
+                return 60;
+                break;
+        }
+    },
 
-            if (this.pointsBox.points > 15) {
+    generateObstacles() {
+        if (this.pointsBox.points < 10) {
+            if (this.framesCounter % this.difficulty(1) === 0) {
+                this.obstacles.push(
+                    new Obstacle(this.ctx, this.width, this.height)
+                );
+            }
+        } else if (this.pointsBox.points > 10 && this.pointsBox.points < 20) {
+            if (this.framesCounter % this.difficulty(2) === 0) {
+                this.obstacles.push(
+                    new Obstacle(this.ctx, this.width, this.height)
+                );
+            }
+        } else if (this.pointsBox.points > 20) {
+            if (this.framesCounter % this.difficulty(3) === 0) {
+                this.obstacles.push(
+                    new Obstacle(this.ctx, this.width, this.height)
+                );
+            }
+        }
+    },
+
+    generateObstaclesFalling() {
+        if (this.pointsBox.points > 15 && this.pointsBox.points < 30) {
+            if (this.framesCounter % this.difficulty(1) === 0) {
+                this.obstaclesFalling.push(
+                    new ObstacleFalling(this.ctx, this.width, this.height)
+                );
+            }
+        } else if (this.pointsBox.points > 30 && this.pointsBox.points < 45) {
+            if (this.framesCounter % this.difficulty(2) === 0) {
+                this.obstaclesFalling.push(
+                    new ObstacleFalling(this.ctx, this.width, this.height)
+                );
+            }
+        } else if (this.pointsBox.points > 45) {
+            if (this.framesCounter % this.difficulty(3) === 0) {
                 this.obstaclesFalling.push(
                     new ObstacleFalling(this.ctx, this.width, this.height)
                 );
             }
         }
     },
+
+    //     if (this.framesCounter % this.difficulty(1) === 0) {
+    //         this.obstacles.push(
+    //             new Obstacle(this.ctx, this.width, this.height)
+    //         );
+
+    //         if (this.pointsBox.points > 15) {
+    //             this.obstaclesFalling.push(
+    //                 new ObstacleFalling(this.ctx, this.width, this.height)
+    //             );
+    //         }
+    //     }
+
+    // },
 
     generateEnemies() {
         if (this.framesCounter % 300 === 0) {
@@ -208,6 +304,18 @@ const game = {
         }
     },
 
+    generatePowerUps() {
+        if (this.framesCounter % 900 === 0) {
+            if (this.pointsBox.points > 0) {
+                //30
+                this.powerUps.push(
+                    new PowerUp(this.ctx, this.width, this.height)
+                );
+            }
+        }
+        //more than enemies
+    },
+
     //CLEARING
 
     clearObstacles() {
@@ -225,14 +333,21 @@ const game = {
         );
     },
 
+    clearPowerUps() {
+        this.powerUps = this.powerUps.filter(
+            (powerUp) =>
+                powerUp.posX + enemy.width >= 0 && !this.checkCollision(powerUp)
+        );
+    },
+
     //COLLISIONS
 
-    checkCollision(obs) {
+    checkCollision(obj) {
         return (
-            this.player.posX < obs.posX + obs.width &&
-            this.player.posX + this.player.width > obs.posX &&
-            this.player.posY < obs.posY + obs.height &&
-            this.player.posY + this.player.height > obs.posY
+            this.player.posX < obj.posX + obj.width &&
+            this.player.posX + this.player.width > obj.posX &&
+            this.player.posY < obj.posY + obj.height &&
+            this.player.posY + this.player.height > obj.posY
         );
     },
 
@@ -282,7 +397,7 @@ const game = {
         });
     },
 
-    isCollisionEnemy(enemies) {
+    isCollisionEnemy() {
         return this.enemies.some((enemy) => {
             const player = {
                 x: this.player.posX,
@@ -307,45 +422,77 @@ const game = {
     },
 
     isCollisionAcid() {
-        this.enemies.forEach((enemy) => {
-            return enemy.acidBullets.some((acid) => {
-                const player = {
-                    x: this.player.posX,
-                    y: this.player.posY,
-                    width: this.player.width,
-                    height: this.player.height,
-                };
+        return this.acidBullets.some((acid) => {
+            const player = {
+                x: this.player.posX,
+                y: this.player.posY,
+                width: this.player.width,
+                height: this.player.height,
+            };
 
-                let acidBullet = {
-                    x: acid.posX,
-                    y: acid.posY,
-                    width: acid.width,
-                    height: acid.height,
-                };
+            let acidBullet = {
+                x: acid.posX,
+                y: acid.posY,
+                width: acid.width,
+                height: acid.height,
+            };
 
-                return (
-                    player.x < acidBullet.x + acidBullet.width &&
-                    player.x + player.width > acidBullet.x &&
-                    player.y < acidBullet.y + acidBullet.height &&
-                    player.y + player.height > acidBullet.y
-                );
-            });
+            return (
+                player.x < acidBullet.x + acidBullet.width &&
+                player.x + player.width > acidBullet.x &&
+                player.y < acidBullet.y + acidBullet.height &&
+                player.y + player.height > acidBullet.y
+            );
+        });
+    },
+
+    isCollisionBubbles(targetArr) {
+        let collision = false;
+
+        this.player.bubbles.forEach((bubble, i) => {
+            for (let i = 0; i < targetArr.length; i++) {
+                if (
+                    bubble.posX < targetArr[i].posX + targetArr[i].width &&
+                    bubble.posX + bubble.width > targetArr[i].posX &&
+                    bubble.posY < targetArr[i].posY + targetArr[i].height &&
+                    bubble.posY + bubble.height > targetArr[i].posY
+                ) {
+                    targetArr.splice(i, 1);
+                    collision = true;
+                }
+            }
+            collision ? this.player.bubbles.splice(i, 1) : null;
         });
 
-        // return (
-        //     this.enemies.filter((enemy) => {
-        //         return (
-        //             enemy.acid.filter((acid) => {
-        //                 return (
-        //                     this.player.posX < acid.posX + acid.width &&
-        //                     this.player.posX + this.player.width > acid.posX &&
-        //                     this.player.posY < acid.posY + acid.height &&
-        //                     this.player.posY + this.player.height > acid.posY
-        //                 );
-        //             }).length > 0
-        //         );
-        //     }).length > 0
-        // );
+        return collision;
+    },
+
+    isCollisionPowerUp() {
+        return this.powerUps.some((powerUp, i) => {
+            const player = {
+                x: this.player.posX,
+                y: this.player.posY,
+                width: this.player.width,
+                height: this.player.height,
+            };
+
+            let powerUpEl = {
+                x: powerUp.posX,
+                y: powerUp.posY,
+                width: powerUp.width,
+                height: powerUp.height,
+            };
+
+            if (
+                player.x < powerUpEl.x + powerUpEl.width &&
+                player.x + player.width > powerUpEl.x &&
+                player.y < powerUpEl.y + powerUpEl.height &&
+                player.y + player.height > powerUpEl.y
+            ) {
+                this.powerUps.splice(i, 1);
+                return true;
+            }
+        });
     },
 
     gameEnd() {

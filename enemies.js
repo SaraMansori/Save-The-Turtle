@@ -28,9 +28,16 @@ class Enemies {
         this.acidCollision = false;
 
         this.image = new Image();
-        this.image.src = "./img/shark.png";
+        this.image.src = this.randomImage();
 
-        this.acidBullets = [];
+        //this.randomImage();
+
+        //this.acidBullets = [];
+    }
+
+    randomImage() {
+        let i = Math.floor(Math.random() * game.enemiesImages.length);
+        return game.enemiesImages[i];
     }
 
     randomY() {
@@ -52,8 +59,7 @@ class Enemies {
             this.shoot();
         }
 
-        this.acidBullets.forEach((acid) => acid.draw());
-        this.clearAcid();
+        //this.clearAcid();
     }
 
     move() {
@@ -61,7 +67,7 @@ class Enemies {
     }
 
     shoot() {
-        this.acidBullets.push(
+        game.acidBullets.push(
             new Acid(
                 this.ctx,
                 this.posX,
@@ -80,15 +86,8 @@ class Enemies {
     }
 
     clearAcid() {
-        this.acidBullets = this.acidBullets.filter(
-            (acid) => acid.posX <= this.gameWidth && !game.checkCollision(acid)
-        );
-    }
-
-    checkAcidCollision() {
-        return (
-            this.acidBullets.filter((acid) => game.checkCollision(acid))
-                .length > 0
+        game.acidBullets = game.acidBullets.filter(
+            (acid) => acid.posX <= game.gameWidth && !game.checkCollision(acid)
         );
     }
 }
