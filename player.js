@@ -1,31 +1,37 @@
 class Player {
     constructor(ctx, gameWidth, gameHeight, keys, framesCounter) {
         this.ctx = ctx;
+        this.turtleImageSources = [
+            "./img/player/turtle.png",
+            "./img/player/turtle-shield.png",
+            "./img/player/turtle-shield2.png",
+        ];
 
         //SIZE
         this.status = "medium";
+        this.currWidth = 100;
 
         //MEDIUM
         this.width = 100;
         this.height = this.width / 1.5;
 
         //SMALL
-        this.widthS = 80;
+        this.widthS = 60;
         this.heightS = this.widthS / 1.5;
 
         //LARGE
-        this.widthL = 120;
+        this.widthL = 130;
         this.heightL = this.widthL / 1.5;
 
         //IMAGES
         this.image = new Image();
         this.image.src = "./img/player/turtle.png";
 
-        this.imageS = new Image();
-        this.image.src = "./img/player/turtle-shield.png";
+        this.imageShield = new Image();
+        this.imageShield.src = "./img/player/turtle-shield.png";
 
-        this.imageL = new Image();
-        this.image.src = "./img/player/turtle-shield2.png";
+        this.imageShield2 = new Image();
+        this.imageShield2.src = "./img/player/turtle-shield2.png";
 
         //Frames of the player sprite
         //this.image.frames = 3;
@@ -63,7 +69,7 @@ class Player {
         switch (this.status) {
             case "medium":
                 this.ctx.drawImage(
-                    this.image,
+                    this.imageShield,
                     // to manage the sprites
                     // this.image.framesIndex *
                     //     Math.floor(this.image.width / this.image.frames),
@@ -78,7 +84,7 @@ class Player {
                 break;
             case "small":
                 this.ctx.drawImage(
-                    this.imageS,
+                    this.image,
                     this.posX,
                     this.posY,
                     this.widthS,
@@ -87,7 +93,7 @@ class Player {
                 break;
             case "large":
                 this.ctx.drawImage(
-                    this.imageL,
+                    this.imageShield2,
                     this.posX,
                     this.posY,
                     this.widthL,
@@ -156,10 +162,6 @@ class Player {
                     if (this.canShoot) {
                         this.shoot();
                     }
-
-                    // if (this.framesCounter % 2 === 0) {
-                    //     this.canShoot = true;
-                    // }
                     break;
             }
         });

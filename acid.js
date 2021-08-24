@@ -12,7 +12,7 @@ class Acid {
         this.enemyWidth = enemyWidth;
         this.posX0 = enemyPosX;
         this.posX = this.posX0;
-        this.posY0 = enemyPosY + enemyHeight / 2;
+        this.posY0 = enemyPosY + enemyHeight / 2.5;
         this.posY = this.posY0;
         this.enemyHeight = enemyHeight;
 

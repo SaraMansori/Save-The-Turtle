@@ -1,8 +1,8 @@
 class Obstacle {
     constructor(ctx, gameWidth, gameHeight) {
         this.ctx = ctx;
-        this.height = 120;
-        this.width = this.height / 1.5;
+        this.height = 60;
+        this.width = this.height / 1.2;
         this.gameHeight = gameHeight;
         this.gameWidth = gameWidth;
         this.posX = gameWidth;
@@ -35,6 +35,14 @@ class Obstacle {
 
     move() {
         this.posX -= this.velX;
+        let down = false;
+        if (!down) {
+            down = true;
+            this.posY += this.velX;
+        }
+        if (down) {
+            this.posY -= this.velX;
+        }
     }
 }
 
@@ -50,7 +58,7 @@ class ObstacleFalling extends Obstacle {
         this.gravity = 0.2;
 
         this.image = new Image();
-        this.image.src = "./img/trash.png";
+        this.image.src = "./img/trash/trashbag.png";
     }
 
     randomX(gameWidth) {

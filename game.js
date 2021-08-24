@@ -1,4 +1,8 @@
 const game = {
+    name: "Save the turtles!",
+    description: "Clean the ocean and defend the turtle",
+    authors: "Alberto, Marta & Sara",
+
     canvas: undefined,
     ctx: undefined,
     width: undefined,
@@ -52,14 +56,67 @@ const game = {
         this.canvas = document.getElementById("myCanvas");
         this.ctx = this.canvas.getContext("2d");
         this.setDimensions();
+        // this.printStartScreen();
+        // this.canvasDOM.addEventListener("click", (e) => {
+        // this.star();
+        //});
         this.start();
     },
 
     setDimensions() {
         this.width = window.innerWidth * 0.8;
-        this.height = window.innerHeight * 0.8;
+        this.height = window.innerHeight * 0.6;
         this.canvas.width = this.width;
         this.canvas.height = this.height;
+    },
+
+    printStartScreen() {
+        this.startBackground = new Image();
+        this.startBackground.src = "./img/background-seamless.jpg";
+        this.startBackground.onload = () => {
+            this.ctx.drawImage(
+                this.startBackground,
+                0,
+                0,
+                this.canvas.width,
+                this.canvas.height
+            );
+            this.ctx.drawImage(
+                this.startBackground,
+                0 + this.canvas.width,
+                0,
+                this.canvas.width,
+                this.canvas.height
+            );
+            this.ctx.textAlign = "center";
+            this.ctx.fillStyle = "white";
+            this.ctx.font = "60px 'Pacifico'";
+            this.ctx.fillText(
+                `Save the turtles!`,
+                this.canvas.width / 2,
+                this.canvas.height / 2
+            );
+            this.ctx.font = '15px "Press Start 2P"';
+            this.ctx.fillText(
+                `Use the arrows to avoid the garbage`,
+                this.canvas.width / 2,
+                Math.floor((this.canvas.height * 2) / 3) + 90
+            );
+            this.ctx.font = '15px "Press Start 2P"';
+            this.ctx.fillText(
+                `and the space bar to attack with bubbles.`,
+                this.canvas.width / 2,
+                Math.floor((this.canvas.height * 2) / 3) + 130
+            );
+            this.ctx.font = '15px "Press Start 2P"';
+            this.ctx.fillText(
+                `Click to Play Now!`,
+                this.canvas.width / 2,
+                this.canvas.height / 2 + 50
+            );
+            this.ctx.textAlign = "left";
+            this.ctx.fillStyle = "white";
+        };
     },
 
     start() {
@@ -204,8 +261,8 @@ const game = {
     drawAll() {
         this.background.draw();
         this.obstacles.forEach((obs) => obs.draw());
-        this.enemies.forEach((enemy) => enemy.draw());
         this.acidBullets.forEach((bullet) => bullet.draw());
+        this.enemies.forEach((enemy) => enemy.draw());
         this.obstaclesFalling.forEach((obs) => obs.draw());
         this.powerUps.forEach((powerUp) => powerUp.draw());
         this.player.draw(this.framesCounter);
@@ -336,7 +393,8 @@ const game = {
     clearPowerUps() {
         this.powerUps = this.powerUps.filter(
             (powerUp) =>
-                powerUp.posX + enemy.width >= 0 && !this.checkCollision(powerUp)
+                powerUp.posX + powerUp.width >= 0 &&
+                !this.checkCollision(powerUp)
         );
     },
 
