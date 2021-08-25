@@ -12,7 +12,9 @@ const game = {
     FPS: 60,
     framesCounter: 0,
     secondsCounter: 0,
+    seconds: 0,
     points: 0,
+    gameStarted: false,
 
     background: undefined,
     player: undefined,
@@ -24,11 +26,20 @@ const game = {
 
     yearCounter: 0,
     year: 2021,
+
+    //Difficulty
+    obstaclesVel: 180,
+    obstaclesFallingVel: 180,
+    enemiesVel: 240,
+    powerUpsVel: 90,
+
+    //Generated
     obstacles: [],
     obstaclesFalling: [],
     enemies: [],
     acidBullets: [],
     powerUps: [],
+    explosions: [],
 
     //GRAPHICS
 
@@ -56,11 +67,13 @@ const game = {
         this.canvas = document.getElementById("myCanvas");
         this.ctx = this.canvas.getContext("2d");
         this.setDimensions();
-        // this.printStartScreen();
-        // this.canvasDOM.addEventListener("click", (e) => {
-        // this.star();
-        //});
-        this.start();
+        this.printStartScreen();
+        this.canvas.addEventListener("click", (e) => {
+            if (!this.gameStarted) {
+                this.start();
+                this.gameStarted = true;
+            }
+        });
     },
 
     setDimensions() {
@@ -88,26 +101,54 @@ const game = {
                 this.canvas.width,
                 this.canvas.height
             );
+
+            //TITLE
             this.ctx.textAlign = "center";
             this.ctx.fillStyle = "white";
             this.ctx.font = "60px 'Pacifico'";
             this.ctx.fillText(
-                `Save the turtles!`,
+                `Save the Turtles!`,
                 this.canvas.width / 2,
                 this.canvas.height / 2
             );
+
+            //RECTANGLE
+
+            let rectangleHeight = 150;
+            this.ctx.fillStyle = "rgba(32, 28, 70, 0.7)";
+            this.ctx.fillRect(
+                0,
+                Math.floor((this.canvas.height * 2) / 3) + 50,
+                this.canvas.width,
+                rectangleHeight
+            );
+            this.ctx.fillStyle = "white";
+            this.ctx.font = '15px "Press Start 2P"';
+            this.ctx.strokeText(
+                `Use the arrows to avoid the garbage`,
+                this.canvas.width / 2,
+                this.canvas.height - rectangleHeight / 2
+            );
+
             this.ctx.font = '15px "Press Start 2P"';
             this.ctx.fillText(
                 `Use the arrows to avoid the garbage`,
                 this.canvas.width / 2,
-                Math.floor((this.canvas.height * 2) / 3) + 90
+                this.canvas.height - rectangleHeight / 2
+            );
+            this.ctx.font = '15px "Press Start 2P"';
+            this.ctx.strokeText(
+                "and the space bar to attack with bubbles.",
+                this.canvas.width / 2,
+                this.canvas.height - 50
             );
             this.ctx.font = '15px "Press Start 2P"';
             this.ctx.fillText(
                 `and the space bar to attack with bubbles.`,
                 this.canvas.width / 2,
-                Math.floor((this.canvas.height * 2) / 3) + 130
+                this.canvas.height - 50
             );
+
             this.ctx.font = '15px "Press Start 2P"';
             this.ctx.fillText(
                 `Click to Play Now!`,
@@ -122,107 +163,101 @@ const game = {
     start() {
         this.reset();
 
+        sounds.music.play();
+
         this.interval = setInterval(() => {
             //SACAR A FUNCIONES
 
-            //To refresh the animation sprite
-            this.framesCounter > 6000
+            //To refresh the interval
+            this.framesCounter > 5000
                 ? (this.framesCounter = 0)
                 : this.framesCounter++;
 
-            //Each second the counter resets
-            this.secondsCounter > 60
-                ? (this.secondsCounter = 0)
-                : this.secondsCounter++;
+            this.updateScore();
+            this.updateYear();
+            //this.updateDifficulty();
 
-            //Each second a point is added to the PointsBox
-            this.secondsCounter > 60
-                ? this.pointsBox.points++
-                : (this.pointsBox.points = this.pointsBox.points);
-
-            //Each 15 seconds the year counter resets
-            this.yearCounter > 900
-                ? (this.yearCounter = 0)
-                : this.yearCounter++;
-
-            //Each 15 seconds the levels year increases by 1
-            this.yearCounter > 900
-                ? this.levels.year++
-                : (this.levels.year = this.levels.year);
-
-            //Clears the canvas
             this.clear();
-
-            //Draws all the canvas
             this.drawAll();
-
-            //Generates the obstacles floating and falling
             this.generateObstacles();
             this.generateObstaclesFalling();
-
-            //Generates Enemies
             this.generateEnemies();
-
             this.generatePowerUps();
-
-            //Checks collision and decreases health if isCollision === true
-
-            if (this.isCollision()) {
-                if (this.player.status === "small") {
-                    this.life.decreaseHealth(10);
-                }
-                this.player.makeSmall(this.player.status);
-            }
-
-            //Checks collision and decreases health if isCollision === true for the falling obstacles
-            if (this.isCollisionFalling()) {
-                this.player.makeSmall(this.player.status);
-                if (this.player.status === "small") {
-                    this.life.decreaseHealth(20);
-                }
-            }
-
-            if (this.isCollisionEnemy()) {
-                this.player.makeSmall(this.player.status);
-                if (this.player.status === "small") {
-                    this.life.decreaseHealth(1);
-                }
-            }
-
-            if (this.isCollisionAcid()) {
-                this.player.makeSmall(this.player.status);
-                this.life.decreaseHealth(25);
-                this.enemies.forEach((enemy) => enemy.clearAcid());
-            }
-
-            this.isCollisionBubbles(this.obstacles)
-                ? this.pointsBox.points++
-                : null;
-            this.isCollisionBubbles(this.obstaclesFalling)
-                ? (this.pointsBox.points += 20)
-                : null;
-            this.isCollisionBubbles(this.enemies)
-                ? (this.pointsBox.points += 15)
-                : null;
-
-            if (this.isCollisionPowerUp(this.powerUps)) {
-                this.life.increaseHealth(15);
-                this.player.enlarge(this.player.status);
-            }
-
-            //Checks collision and decreases health if isCollision === true for the falling obstacles
-
-            if (this.life.health <= 0) {
-                this.gameEnd();
-            }
-
-            //console.log(this.powerUps);
+            this.checkAllCollisions();
+            this.animateAll();
+            this.isGameOver();
 
             //Clears obstacles that have been hit and the ones that are outside the screen and powerUps
             this.clearObstacles();
             this.clearEnemies();
             this.clearPowerUps();
         }, 1000 / this.FPS);
+    },
+
+    animateAll() {
+        this.explosions.forEach((explosion) => explosion.animate());
+    },
+
+    updateScore() {
+        if (this.framesCounter % 60 === 0) {
+            this.pointsBox.points++;
+        }
+    },
+
+    updateYear() {
+        //Each 15 seconds the levels year increases by 1
+        if (this.framesCounter % 900 === 0) {
+            this.levels.year++;
+            this.yearCounter++;
+            this.obstaclesVel -= 15;
+            this.obstaclesFallingVel -= 15;
+            this.enemiesVel -= 15;
+            this.enemiesVel -= 15;
+        }
+    },
+
+    checkAllCollisions() {
+        if (this.isCollision()) {
+            if (this.player.status === "small") {
+                this.life.decreaseHealth(10);
+            }
+            this.player.makeSmall(this.player.status);
+        }
+
+        if (this.isCollisionFalling()) {
+            this.player.makeSmall(this.player.status);
+            if (this.player.status === "small") {
+                this.life.decreaseHealth(20);
+            }
+        }
+
+        if (this.isCollisionEnemy()) {
+            this.player.makeSmall(this.player.status);
+            if (this.player.status === "small") {
+                this.life.decreaseHealth(1);
+            }
+        }
+
+        if (this.isCollisionAcid()) {
+            this.player.makeSmall(this.player.status);
+            this.life.decreaseHealth(25);
+            this.enemies.forEach((enemy) => enemy.clearAcid());
+        }
+
+        this.isCollisionBubbles(this.obstacles)
+            ? this.pointsBox.points++
+            : null;
+        this.isCollisionBubbles(this.obstaclesFalling)
+            ? (this.pointsBox.points += 20)
+            : null;
+        this.isCollisionBubbles(this.enemies)
+            ? (this.pointsBox.points += 15)
+            : null;
+
+        if (this.isCollisionPowerUp(this.powerUps)) {
+            this.life.increaseHealth(15);
+            this.player.enlarge(this.player.status);
+        }
     },
 
     reset() {
@@ -242,16 +277,28 @@ const game = {
         this.obstacles = [];
         this.obstaclesFalling = [];
         this.powerUps = [];
+        this.enemies = [];
+
+        this.framesCounter = 0;
+        this.secondsCounter = 0;
+        this.seconds = 0;
+        this.points = 0;
         this.pointsBox = new Points(
             this.ctx,
             this.width,
             this.height,
             this.points
         );
+
         this.barsPosY = this.pointsBox.posY;
         this.life = new Life(this.ctx, this.width, this.height, this.barsPosY);
         this.levels = new Levels(this.ctx, this.width, this.height, this.year);
-        this.gameOver = new GameOver(this.ctx, this.width, this.height);
+        this.gameOver = new GameOver(
+            this.ctx,
+            this.width,
+            this.height,
+            this.framesCounter
+        );
     },
 
     clear() {
@@ -260,6 +307,7 @@ const game = {
 
     drawAll() {
         this.background.draw();
+        this.explodeBubble();
         this.obstacles.forEach((obs) => obs.draw());
         this.acidBullets.forEach((bullet) => bullet.draw());
         this.enemies.forEach((enemy) => enemy.draw());
@@ -271,117 +319,81 @@ const game = {
         this.levels.draw();
     },
 
-    difficulty(level) {
-        switch (level) {
-            case 1:
-                return 200;
-                break;
-            case 2:
-                return 90;
-                break;
-            case 3:
-                return 60;
-                break;
-        }
-    },
-
     generateObstacles() {
-        if (this.pointsBox.points < 10) {
-            if (this.framesCounter % this.difficulty(1) === 0) {
-                this.obstacles.push(
-                    new Obstacle(this.ctx, this.width, this.height)
-                );
-            }
-        } else if (this.pointsBox.points > 10 && this.pointsBox.points < 20) {
-            if (this.framesCounter % this.difficulty(2) === 0) {
-                this.obstacles.push(
-                    new Obstacle(this.ctx, this.width, this.height)
-                );
-            }
-        } else if (this.pointsBox.points > 20) {
-            if (this.framesCounter % this.difficulty(3) === 0) {
-                this.obstacles.push(
-                    new Obstacle(this.ctx, this.width, this.height)
-                );
-            }
+        if (
+            this.yearCounter >= 0 &&
+            this.framesCounter % this.obstaclesVel === 0
+        ) {
+            this.obstacles.push(
+                new Obstacle(this.ctx, this.width, this.height)
+            );
         }
     },
 
     generateObstaclesFalling() {
-        if (this.pointsBox.points > 15 && this.pointsBox.points < 30) {
-            if (this.framesCounter % this.difficulty(1) === 0) {
-                this.obstaclesFalling.push(
-                    new ObstacleFalling(this.ctx, this.width, this.height)
-                );
-            }
-        } else if (this.pointsBox.points > 30 && this.pointsBox.points < 45) {
-            if (this.framesCounter % this.difficulty(2) === 0) {
-                this.obstaclesFalling.push(
-                    new ObstacleFalling(this.ctx, this.width, this.height)
-                );
-            }
-        } else if (this.pointsBox.points > 45) {
-            if (this.framesCounter % this.difficulty(3) === 0) {
-                this.obstaclesFalling.push(
-                    new ObstacleFalling(this.ctx, this.width, this.height)
-                );
-            }
+        //FIRST YEAR/LEVEL
+        if (
+            this.yearCounter > 0 &&
+            this.framesCounter % this.obstaclesFallingVel === 0
+        ) {
+            this.obstaclesFalling.push(
+                new ObstacleFalling(this.ctx, this.width, this.height)
+            );
         }
     },
 
-    //     if (this.framesCounter % this.difficulty(1) === 0) {
-    //         this.obstacles.push(
-    //             new Obstacle(this.ctx, this.width, this.height)
-    //         );
-
-    //         if (this.pointsBox.points > 15) {
-    //             this.obstaclesFalling.push(
-    //                 new ObstacleFalling(this.ctx, this.width, this.height)
-    //             );
-    //         }
-    //     }
-
-    // },
-
     generateEnemies() {
-        if (this.framesCounter % 300 === 0) {
-            if (this.pointsBox.points > 10) {
-                this.enemies.push(
-                    new Enemies(
-                        this.ctx,
-                        this.width,
-                        this.height,
-                        this.player.posX,
-                        this.player.posY,
-                        this.player.width,
-                        this.player.height
-                    )
-                );
-            }
+        if (
+            this.yearCounter >= 0 &&
+            this.framesCounter % this.enemiesVel === 0
+        ) {
+            //Each 5 seconds an emeny appears beginning on the year 1
+            this.enemies.push(
+                new Enemies(
+                    this.ctx,
+                    this.width,
+                    this.height,
+                    this.player.posX,
+                    this.player.posY,
+                    this.player.width,
+                    this.player.height
+                )
+            );
         }
     },
 
     generatePowerUps() {
-        if (this.framesCounter % 900 === 0) {
-            if (this.pointsBox.points > 0) {
-                //30
-                this.powerUps.push(
-                    new PowerUp(this.ctx, this.width, this.height)
-                );
-            }
+        //Each 15 seconds a power up appears beginning on the year 1
+        if (this.framesCounter % 900 === 0 && this.yearCounter > 0) {
+            this.powerUps.push(new PowerUp(this.ctx, this.width, this.height));
         }
-        //more than enemies
     },
 
-    //CLEARING
+    //CLEARING ELEMENTS
 
     clearObstacles() {
+        this.obstacles.forEach((obs) => {
+            if (this.checkCollision(obs)) {
+                this.explosions.push(
+                    new Explosion(this.ctx, obs.posX, obs.posY)
+                );
+            }
+        });
+
         this.obstacles = this.obstacles.filter(
             (obs) => obs.posX + obs.width >= 0 && !this.checkCollision(obs)
         );
+
         this.obstaclesFalling = this.obstaclesFalling.filter(
             (obs) => obs.posY <= this.height && !this.checkCollision(obs)
         );
+    },
+
+    explodeBubble() {
+        this.explosions.forEach((bubble, i) => {
+            bubble.explode();
+            bubble.timer === 90 ? this.explosions.splice(i, 1) : null;
+        });
     },
 
     clearEnemies() {
@@ -553,12 +565,16 @@ const game = {
         });
     },
 
-    gameEnd() {
-        clearInterval(this.interval);
-        this.life.health = 0;
-        this.life.barWidth = 0;
-        this.clear();
-        this.drawAll();
-        this.gameOver.draw();
+    isGameOver() {
+        if (this.life.health <= 0) {
+            clearInterval(this.interval); //
+            this.life.health = 0;
+            this.life.barWidth = 0;
+            this.clear();
+            this.drawAll();
+            this.gameStarted = false;
+            this.gameOver.draw();
+            sounds.music.pause();
+        }
     },
 };

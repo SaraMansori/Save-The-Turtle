@@ -1,21 +1,61 @@
 class GameOver {
-    constructor(
-        ctx,
-        gameWidth,
-        gameHeight
-    ) {
+    constructor(ctx, gameWidth, gameHeight, framesCounter) {
         this.ctx = ctx;
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
         this.posX = this.gameWidth / 2;
         this.posY = this.gameHeight / 2;
-    };
+        this.borderX = this.posX - (game.width * 0.6) / 2;
+        this.borderY = this.posY - (game.height * 0.5) / 2;
+        this.borderWidth = game.width * 0.6;
+        this.borderHeight = game.height * 0.5;
+        this.framesCounter = framesCounter;
+    }
 
-    draw(){
+    draw() {
+        this.ctx.fillStyle = "rgba(32, 28, 70, 0.7)";
+        this.ctx.fillRect(
+            this.borderX,
+            this.borderY,
+            this.borderWidth,
+            this.borderHeight
+        );
+        this.ctx.strokeStyle = "white";
+        this.ctx.lineWidth = 8;
+        this.ctx.strokeRect(
+            this.borderX,
+            this.borderY,
+            this.borderWidth,
+            this.borderHeight
+        );
+        this.ctx.strokeStyle = "black";
+        this.ctx.lineWidth = 1;
         this.ctx.textAlign = "center";
         this.ctx.fillStyle = "white";
         this.ctx.font = "30px 'Press Start 2P'";
-        this.ctx.fillText('GAME OVER', this.posX, this.posY);
-        this.ctx.strokeText('GAME OVER', this.posX, this.posY);
-    };
-};
+        this.ctx.fillText("GAME OVER", this.posX, this.posY - 60);
+        this.ctx.strokeText("GAME OVER", this.posX, this.posY - 60);
+        this.ctx.font = "15px 'Press Start 2P'";
+        this.ctx.fillText(
+            `You survived until year ${game.levels.year}`,
+            this.posX,
+            this.posY - 20
+        );
+        this.ctx.fillText(
+            `with ${game.pointsBox.points} points`,
+            this.posX,
+            this.posY
+        );
+        this.ctx.font = '25px "Press Start 2P"';
+
+        setTimeout(() => {
+            //setInterval giving bugs
+            this.ctx.fillText("Click to Play again", this.posX, this.posY + 80);
+            this.ctx.strokeText(
+                "Click to Play again",
+                this.posX,
+                this.posY + 80
+            );
+        }, 1000);
+    }
+}

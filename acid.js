@@ -5,7 +5,8 @@ class Acid {
         enemyPosY,
         enemyPosY0,
         enemyWidth,
-        enemyHeight
+        enemyHeight,
+        imageIndex
     ) {
         this.ctx = ctx;
         this.enemyPosY0 = enemyPosY0;
@@ -20,8 +21,16 @@ class Acid {
         this.width = this.size * 1.8;
         this.height = this.size;
 
+        this.imageIndex = imageIndex;
+
         this.image = new Image();
-        this.image.src = "./img/greenflame.png";
+        this.image.src = "./img/acid/green-acid.png";
+
+        this.blueAcidImage = new Image();
+        this.blueAcidImage.src = "./img/acid/blue-acid.png";
+
+        this.redAcidImage = new Image();
+        this.redAcidImage.src = "./img/acid/red-acid.png";
 
         this.velX = 10;
         this.velY = 0.2;
@@ -32,11 +41,8 @@ class Acid {
     }
 
     draw() {
-        //this.ctx.fillStyle = "purple";
-        //this.ctx.fillRect(this.posX, this.posY, this.width, this.height);
-
         this.ctx.drawImage(
-            this.image,
+            this.acidColor(),
             this.posX,
             this.posY,
             this.width,
@@ -44,6 +50,16 @@ class Acid {
         );
 
         this.move();
+    }
+
+    acidColor() {
+        if (this.imageIndex === 0) {
+            return this.image;
+        } else if (this.imageIndex === 1) {
+            return this.blueAcidImage;
+        } else if (this.imageIndex === 2) {
+            return this.redAcidImage;
+        }
     }
 
     move() {

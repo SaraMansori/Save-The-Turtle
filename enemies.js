@@ -28,16 +28,16 @@ class Enemies {
         this.acidCollision = false;
 
         this.image = new Image();
+        this.imageIndex = this.randomIndex();
         this.image.src = this.randomImage();
+    }
 
-        //this.randomImage();
-
-        //this.acidBullets = [];
+    randomIndex() {
+        return Math.floor(Math.random() * game.enemiesImages.length);
     }
 
     randomImage() {
-        let i = Math.floor(Math.random() * game.enemiesImages.length);
-        return game.enemiesImages[i];
+        return game.enemiesImages[this.imageIndex];
     }
 
     randomY() {
@@ -58,8 +58,6 @@ class Enemies {
         if (this.canShoot === true) {
             this.shoot();
         }
-
-        //this.clearAcid();
     }
 
     move() {
@@ -74,13 +72,14 @@ class Enemies {
                 this.posY,
                 this.posY0,
                 this.width,
-                this.height
+                this.height,
+                this.imageIndex
             )
         );
 
         this.canShoot = false;
 
-        let IntervalId = setTimeout(() => {
+        setTimeout(() => {
             this.canShoot = true;
         }, 1000);
     }

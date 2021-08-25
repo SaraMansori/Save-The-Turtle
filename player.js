@@ -161,6 +161,7 @@ class Player {
                 case this.keys.SPACE:
                     if (this.canShoot) {
                         this.shoot();
+                        this.canShoot = false;
                     }
                     break;
             }
@@ -180,6 +181,9 @@ class Player {
                     break;
                 case this.keys.DOWN:
                     this.movingDown = false;
+                    break;
+                case this.keys.SPACE:
+                    this.canShoot = true;
                     break;
             }
         });
