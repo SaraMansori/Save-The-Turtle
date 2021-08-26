@@ -23,9 +23,8 @@ const game = {
     levels: undefined,
     levelsBanners: [],
     life: undefined,
-
+    healthIndicators: [],
     gameOver: undefined,
-
     yearCounter: 0,
     year: 2021,
 
@@ -128,7 +127,7 @@ const game = {
             this.ctx.fillText(
                 `Save the Turtle!`,
                 this.canvas.width / 2,
-                this.canvas.height / 2
+                this.canvas.height / 3
             );
 
             //RECTANGLE
@@ -200,16 +199,16 @@ const game = {
             this.ctx.lineWidth = 3;
             this.ctx.strokeRect(
                 this.canvas.width / 2 - 200,
-                this.canvas.height / 2 + 18,
+                this.canvas.height / 2 - 33,
                 400,
                 50
             );
 
             this.ctx.font = '15px "Press Start 2P"';
             this.ctx.fillText(
-                `Click to Play Now!`,
+                `Click to Play`,
                 this.canvas.width / 2,
-                this.canvas.height / 2 + 50
+                this.canvas.height / 2
             );
             this.ctx.textAlign = "left";
             this.ctx.fillStyle = "white";
@@ -219,15 +218,11 @@ const game = {
     start() {
         this.reset();
 
-        console.log(this.yearCounter);
-
         sounds.music.play();
         sounds.music.volume = 0.4;
         sounds.music.loop = true;
 
         this.interval = setInterval(() => {
-            console.log(this.previousHighScore);
-
             //To refresh the interval
             this.framesCounter > 5000
                 ? (this.framesCounter = 0)
@@ -366,6 +361,8 @@ const game = {
         this.obstaclesFalling = [];
         this.powerUps = [];
         this.enemies = [];
+        this.levelsBanners = [];
+        this.healthIndicators = [];
 
         this.framesCounter = 0;
         this.secondsCounter = 0;
@@ -386,6 +383,7 @@ const game = {
         this.barsPosY = this.pointsBox.posY;
         this.life = new Life(this.ctx, this.width, this.height, this.barsPosY);
         this.levels = new Levels(this.ctx, this.width, this.height, this.year);
+
         this.gameOver = new GameOver(
             this.ctx,
             this.width,
@@ -407,6 +405,7 @@ const game = {
         this.powerUps.forEach((powerUp) => powerUp.draw());
         this.player.draw(this.framesCounter);
         this.explodeBubble();
+        this.appearHealthIndicator();
         this.pointsBox.draw();
         this.levelsBanners.forEach((banner) => banner.draw());
         this.life.draw();
@@ -469,6 +468,13 @@ const game = {
         });
     },
 
+    appearHealthIndicator() {
+        this.healthIndicators.forEach((indicator, i) => {
+            indicator.draw();
+            indicator.timer === 90 ? this.healthIndicators.splice(i, 1) : null;
+        });
+    },
+
     //CLEARING ELEMENTS
 
     clearExplosion(arr) {
@@ -481,14 +487,31 @@ const game = {
         });
     },
 
+    clearHealthIndicator(arr, type) {
+        arr.forEach((arrEl, i) => {
+            if (this.checkCollision(arrEl)) {
+                this.healthIndicators.push(
+                    new HealthIndicators(
+                        this.ctx,
+                        type,
+                        this.player.posX,
+                        this.player.posY
+                    )
+                );
+            }
+        });
+    },
+
     clearObstacles() {
         this.clearExplosion(this.obstacles);
+        this.clearHealthIndicator(this.obstacles, "obstacle");
 
         this.obstacles = this.obstacles.filter(
             (obs) => obs.posX + obs.width >= 0 && !this.checkCollision(obs)
         );
 
         this.clearExplosion(this.obstaclesFalling);
+        this.clearHealthIndicator(this.obstaclesFalling, "obstacleFalling");
 
         this.obstaclesFalling = this.obstaclesFalling.filter(
             (obs) => obs.posY <= this.height && !this.checkCollision(obs)
@@ -496,14 +519,14 @@ const game = {
     },
 
     clearEnemies() {
-        //INCLUDE ANOTHER SPRITE
-
+        this.clearHealthIndicator(this.enemies, "enemy");
         this.enemies = this.enemies.filter(
             (enemy) => enemy.posX + enemy.width >= 0
         );
     },
 
     clearPowerUps() {
+        this.clearHealthIndicator(this.powerUps, "powerUp");
         this.powerUps = this.powerUps.filter(
             (powerUp) =>
                 powerUp.posX + powerUp.width >= 0 &&

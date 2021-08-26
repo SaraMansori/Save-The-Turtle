@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -17,13 +18,18 @@
             rel="stylesheet"
         />
         <link rel="stylesheet" href="./style.css" />
+
         <title>Save the Turtle</title>
+        <link rel="icon" href="./img/player/turtle.png" />
     </head>
     <body>
         <section class="game">
+            <div id="preload-font">.</div>
+            <div id="preload-pacifico-font">.</div>
             <canvas id="myCanvas" style="border: 12px solid #ffffff"></canvas>
         </section>
 
+        <script src="./js/healthIndicators.js"></script>
         <script src="./js/powerup.js"></script>
         <script src="./js//banner.js"></script>
         <script src="./js//points.js"></script>

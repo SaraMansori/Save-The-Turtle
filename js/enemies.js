@@ -88,5 +88,6 @@ class Enemies {
         game.acidBullets = game.acidBullets.filter(
             (acid) => acid.posX <= game.gameWidth && !game.checkCollision(acid)
         );
+        game.clearHealthIndicator(game.acidBullets, "acid");
     }
 }

@@ -7,6 +7,12 @@ class Points {
         this.height = this.width / 4;
         this.points = points;
 
+        this.pointsImages = [
+            "./img/points/one-point",
+            "./img/points/fifteen-points",
+            "./img/points/twenty-points",
+        ];
+
         this.posX = 30;
         this.posY = 60;
     }
@@ -23,4 +29,6 @@ class Points {
             this.posY + 30
         );
     }
+
+    drawIndicator() {}
 }

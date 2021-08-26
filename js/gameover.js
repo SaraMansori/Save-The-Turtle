@@ -37,7 +37,7 @@ class GameOver {
         this.ctx.strokeText("GAME OVER", this.posX, this.posY - 60);
         this.ctx.font = "15px 'Press Start 2P'";
         this.ctx.fillText(
-            `You survived until year ${game.levels.year}`,
+            `You survived until the year ${game.levels.year}`,
             this.posX,
             this.posY - 30
         );
@@ -71,13 +71,12 @@ class GameOver {
         this.ctx.fillStyle = "white";
         this.ctx.strokeStyle = "black";
         setTimeout(() => {
-            //setInterval giving bugs
             this.ctx.fillText("Click to Play again", this.posX, this.posY + 90);
             this.ctx.strokeText(
                 "Click to Play again",
                 this.posX,
                 this.posY + 90
             );
-        }, 1000);
+        }, 500);
     }
 }
