@@ -14,12 +14,14 @@ const game = {
     secondsCounter: 0,
     seconds: 0,
     points: 0,
+    previousHighScore: 0,
     gameStarted: false,
 
     background: undefined,
     player: undefined,
     pointsBox: undefined,
     levels: undefined,
+    levelsBanners: [],
     life: undefined,
 
     gameOver: undefined,
@@ -42,7 +44,6 @@ const game = {
     explosions: [],
 
     //GRAPHICS
-
     enemiesImages: [
         "./img/enemies/enemy.png",
         "./img/enemies/enemy2.png",
@@ -61,6 +62,20 @@ const game = {
         RIGHT: 39,
         LEFT: 37,
         SPACE: 32,
+    },
+
+    //HIGH SCORE
+    highScore() {
+        let highScore = localStorage.getItem("highScore") || 0;
+        localStorage.setItem("highScore", highScore);
+
+        this.previousHighScore = highScore;
+
+        if (this.pointsBox.points > highScore) {
+            highScore = parseInt(this.pointsBox.points);
+            localStorage.setItem("highScore", highScore);
+        }
+        return highScore;
     },
 
     init() {
@@ -164,6 +179,8 @@ const game = {
         this.reset();
 
         sounds.music.play();
+        sounds.music.volume = 0.4;
+        sounds.music.loop = true;
 
         this.interval = setInterval(() => {
             //SACAR A FUNCIONES
@@ -196,6 +213,7 @@ const game = {
 
     animateAll() {
         this.explosions.forEach((explosion) => explosion.animate());
+        this.player.animate(this.framesCounter);
     },
 
     updateScore() {
@@ -209,6 +227,14 @@ const game = {
         if (this.framesCounter % 900 === 0) {
             this.levels.year++;
             this.yearCounter++;
+            this.levelsBanners.push(
+                new Banner(
+                    this.ctx,
+                    this.levels.year.toString(),
+                    this.width,
+                    this.height
+                )
+            );
             this.obstaclesVel -= 15;
             this.obstaclesFallingVel -= 15;
             this.enemiesVel -= 15;
@@ -220,6 +246,10 @@ const game = {
         if (this.isCollision()) {
             if (this.player.status === "small") {
                 this.life.decreaseHealth(10);
+                sounds.damage.preload = "auto";
+                sounds.damage.load();
+                sounds.damage.play();
+                sounds.damage.volume = 0.3;
             }
             this.player.makeSmall(this.player.status);
         }
@@ -228,6 +258,10 @@ const game = {
             this.player.makeSmall(this.player.status);
             if (this.player.status === "small") {
                 this.life.decreaseHealth(20);
+                sounds.damage.preload = "auto";
+                sounds.damage.load();
+                sounds.damage.play();
+                sounds.damage.volume = 0.3;
             }
         }
 
@@ -235,6 +269,10 @@ const game = {
             this.player.makeSmall(this.player.status);
             if (this.player.status === "small") {
                 this.life.decreaseHealth(1);
+                sounds.damage.preload = "auto";
+                sounds.damage.load();
+                sounds.damage.play();
+                sounds.damage.volume = 0.3;
             }
         }
 
@@ -242,6 +280,10 @@ const game = {
             this.player.makeSmall(this.player.status);
             this.life.decreaseHealth(25);
             this.enemies.forEach((enemy) => enemy.clearAcid());
+            sounds.damage.preload = "auto";
+            sounds.damage.load();
+            sounds.damage.play();
+            sounds.damage.volume = 0.3;
         }
 
         this.isCollisionBubbles(this.obstacles)
@@ -257,6 +299,8 @@ const game = {
         if (this.isCollisionPowerUp(this.powerUps)) {
             this.life.increaseHealth(15);
             this.player.enlarge(this.player.status);
+            sounds.bonus.play();
+            sounds.bonus.volume = 0.3;
         }
     },
 
@@ -307,14 +351,15 @@ const game = {
 
     drawAll() {
         this.background.draw();
-        this.explodeBubble();
         this.obstacles.forEach((obs) => obs.draw());
         this.acidBullets.forEach((bullet) => bullet.draw());
         this.enemies.forEach((enemy) => enemy.draw());
         this.obstaclesFalling.forEach((obs) => obs.draw());
         this.powerUps.forEach((powerUp) => powerUp.draw());
         this.player.draw(this.framesCounter);
+        this.explodeBubble();
         this.pointsBox.draw();
+        this.levelsBanners.forEach((banner) => banner.draw());
         this.life.draw();
         this.levels.draw();
     },
@@ -344,7 +389,7 @@ const game = {
 
     generateEnemies() {
         if (
-            this.yearCounter >= 0 &&
+            this.yearCounter >= 2 &&
             this.framesCounter % this.enemiesVel === 0
         ) {
             //Each 5 seconds an emeny appears beginning on the year 1
@@ -368,27 +413,6 @@ const game = {
             this.powerUps.push(new PowerUp(this.ctx, this.width, this.height));
         }
     },
-
-    //CLEARING ELEMENTS
-
-    clearObstacles() {
-        this.obstacles.forEach((obs) => {
-            if (this.checkCollision(obs)) {
-                this.explosions.push(
-                    new Explosion(this.ctx, obs.posX, obs.posY)
-                );
-            }
-        });
-
-        this.obstacles = this.obstacles.filter(
-            (obs) => obs.posX + obs.width >= 0 && !this.checkCollision(obs)
-        );
-
-        this.obstaclesFalling = this.obstaclesFalling.filter(
-            (obs) => obs.posY <= this.height && !this.checkCollision(obs)
-        );
-    },
-
     explodeBubble() {
         this.explosions.forEach((bubble, i) => {
             bubble.explode();
@@ -396,7 +420,35 @@ const game = {
         });
     },
 
+    //CLEARING ELEMENTS
+
+    clearExplosion(arr) {
+        arr.forEach((arrEl) => {
+            if (this.checkCollision(arrEl)) {
+                this.explosions.push(
+                    new Explosion(this.ctx, arrEl.posX, arrEl.posY)
+                );
+            }
+        });
+    },
+
+    clearObstacles() {
+        this.clearExplosion(this.obstacles);
+
+        this.obstacles = this.obstacles.filter(
+            (obs) => obs.posX + obs.width >= 0 && !this.checkCollision(obs)
+        );
+
+        this.clearExplosion(this.obstaclesFalling);
+
+        this.obstaclesFalling = this.obstaclesFalling.filter(
+            (obs) => obs.posY <= this.height && !this.checkCollision(obs)
+        );
+    },
+
     clearEnemies() {
+        //INCLUDE ANOTHER SPRITE
+
         this.enemies = this.enemies.filter(
             (enemy) => enemy.posX + enemy.width >= 0
         );
@@ -527,11 +579,21 @@ const game = {
                     bubble.posY < targetArr[i].posY + targetArr[i].height &&
                     bubble.posY + bubble.height > targetArr[i].posY
                 ) {
+                    this.clearExplosion(targetArr);
                     targetArr.splice(i, 1);
                     collision = true;
                 }
             }
-            collision ? this.player.bubbles.splice(i, 1) : null;
+            if (collision) {
+                this.explosions.push(
+                    new Explosion(this.ctx, bubble.posX, bubble.posY)
+                );
+                this.player.bubbles.splice(i, 1);
+                sounds.bubbleShot.preload = "auto";
+                sounds.bubbleShot.load();
+                sounds.bubbleExplode.play();
+                sounds.bubbleExplode.volume = 0.4;
+            }
         });
 
         return collision;
@@ -567,7 +629,8 @@ const game = {
 
     isGameOver() {
         if (this.life.health <= 0) {
-            clearInterval(this.interval); //
+            clearInterval(this.interval);
+            this.highScore(this.pointsBox.points);
             this.life.health = 0;
             this.life.barWidth = 0;
             this.clear();
@@ -575,6 +638,9 @@ const game = {
             this.gameStarted = false;
             this.gameOver.draw();
             sounds.music.pause();
+            sounds.music.currentTime = 0;
+            sounds.gameOver.play();
+            sounds.gameOver.volume = 0.6;
         }
     },
 };

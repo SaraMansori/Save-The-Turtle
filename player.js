@@ -1,10 +1,10 @@
 class Player {
-    constructor(ctx, gameWidth, gameHeight, keys, framesCounter) {
+    constructor(ctx, gameWidth, gameHeight, keys) {
         this.ctx = ctx;
         this.turtleImageSources = [
-            "./img/player/turtle.png",
-            "./img/player/turtle-shield.png",
-            "./img/player/turtle-shield2.png",
+            "./img/player/turtle-animation/turtle.png",
+            "./img/player/turtle-animation/turtle-shield.png",
+            "./img/player/turtle-animation/turtle-shield2.png",
         ];
 
         //SIZE
@@ -25,17 +25,18 @@ class Player {
 
         //IMAGES
         this.image = new Image();
-        this.image.src = "./img/player/turtle.png";
+        this.image.src = "./img/player/turtle-animation/turtle.png";
 
         this.imageShield = new Image();
-        this.imageShield.src = "./img/player/turtle-shield.png";
+        this.imageShield.src =
+            "./img/player/turtle-animation/turtle-shield.png";
 
         this.imageShield2 = new Image();
-        this.imageShield2.src = "./img/player/turtle-shield2.png";
+        this.imageShield2.src =
+            "./img/player/turtle-animation/turtle-shield2.png";
 
-        //Frames of the player sprite
-        //this.image.frames = 3;
-        //this.image.framesIndex = 0;
+        this.image.frames = 2;
+        this.image.framesIndex = 0;
 
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
@@ -46,7 +47,6 @@ class Player {
 
         //BUBBLES ATTACK
         this.bubbles = [];
-        this.framesCounter = framesCounter;
         this.canShoot = true;
 
         //MOVEMENT
@@ -70,12 +70,11 @@ class Player {
             case "medium":
                 this.ctx.drawImage(
                     this.imageShield,
-                    // to manage the sprites
-                    // this.image.framesIndex *
-                    //     Math.floor(this.image.width / this.image.frames),
-                    // 0,
-                    // Math.floor(this.image.width / this.image.frames),
-                    // this.image.height,
+                    this.image.framesIndex *
+                        Math.floor(this.image.width / this.image.frames),
+                    0,
+                    Math.floor(this.image.width / this.image.frames),
+                    this.image.height,
                     this.posX,
                     this.posY,
                     this.width,
@@ -85,6 +84,11 @@ class Player {
             case "small":
                 this.ctx.drawImage(
                     this.image,
+                    this.image.framesIndex *
+                        Math.floor(this.image.width / this.image.frames),
+                    0,
+                    Math.floor(this.image.width / this.image.frames),
+                    this.image.height,
                     this.posX,
                     this.posY,
                     this.widthS,
@@ -94,6 +98,11 @@ class Player {
             case "large":
                 this.ctx.drawImage(
                     this.imageShield2,
+                    this.image.framesIndex *
+                        Math.floor(this.image.width / this.image.frames),
+                    0,
+                    Math.floor(this.image.width / this.image.frames),
+                    this.image.height,
                     this.posX,
                     this.posY,
                     this.widthL,
@@ -102,7 +111,6 @@ class Player {
                 break;
         }
 
-        //goes down with gravity if it moves up
         this.move();
 
         //draw bubbles
@@ -110,14 +118,14 @@ class Player {
         this.clearBubbles();
     }
 
-    // swim(framesCounter) {
-    //     //the framesCounter will be used to animate the sprite in:
-    //     //this.animateSprite(framesCounter);
-    // }
-
-    // animateSprite() {
-    //     return;
-    // }
+    animate(framesCounter) {
+        if (framesCounter % 30 === 0) {
+            this.image.framesIndex++;
+        }
+        if (this.image.framesIndex >= this.image.frames) {
+            this.image.framesIndex = 0;
+        }
+    }
 
     move() {
         //Floating
@@ -162,6 +170,10 @@ class Player {
                     if (this.canShoot) {
                         this.shoot();
                         this.canShoot = false;
+                        sounds.bubbleShot.preload = "auto";
+                        sounds.bubbleShot.load();
+                        sounds.bubbleShot.play();
+                        sounds.bubbleShot.volume = 0.6;
                     }
                     break;
             }

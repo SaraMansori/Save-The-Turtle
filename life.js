@@ -14,16 +14,44 @@ class Life {
         this.maxHealth = 100;
     }
 
+    colorHealth() {
+        let percent = (this.health / this.maxHealth) * 100;
+        if (percent <= 70) {
+            //yellows
+            this.color = "#d6ed20";
+        }
+        if (percent <= 50) {
+            //orange
+            this.color = "#ffbe3d";
+        }
+        if (percent <= 25) {
+            //reds
+            this.color = "#ff3d3d";
+        }
+        if (percent > 70) {
+            //green
+            this.color = "#66CC66";
+        }
+    }
+
     draw() {
+        this.colorHealth();
         this.ctx.fillStyle = this.color;
-        this.ctx.fillRect(this.posX, this.posY, this.barWidth, this.barHeight);
+        this.ctx.fillRect(
+            this.posX,
+            this.posY - 6,
+            this.barWidth,
+            this.barHeight + 12
+        );
         this.ctx.font = "20px 'Press Start 2P'";
-        this.ctx.fillStyle = "black";
+        this.ctx.fillStyle = "white";
+        this.ctx.strokeStyle = "white";
+        this.ctx.lineWidth = 3;
         this.ctx.strokeRect(
             this.posX,
-            this.posY,
+            this.posY - 6,
             this.barMaxWidth,
-            this.barHeight
+            this.barHeight + 12
         );
         this.ctx.textAlign = "center";
         this.ctx.fillText(

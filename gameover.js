@@ -39,13 +39,27 @@ class GameOver {
         this.ctx.fillText(
             `You survived until year ${game.levels.year}`,
             this.posX,
-            this.posY - 20
+            this.posY - 30
         );
         this.ctx.fillText(
             `with ${game.pointsBox.points} points`,
             this.posX,
             this.posY
         );
+
+        if (game.highScore() > game.previousHighScore) {
+            this.ctx.fillText(
+                `NEW HIGHEST SCORE: ${game.highScore()}`,
+                this.posX,
+                this.posY + 30
+            );
+        } else {
+            this.ctx.fillText(
+                `The high score is ${game.highScore()}`,
+                this.posX,
+                this.posY + 30
+            );
+        }
         this.ctx.font = '25px "Press Start 2P"';
 
         setTimeout(() => {

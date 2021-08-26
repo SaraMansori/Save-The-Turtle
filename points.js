@@ -13,8 +13,14 @@ class Points {
 
     draw() {
         this.ctx.textAlign = "left";
-        this.ctx.fillStyle = "black";
+        this.ctx.fillStyle = "white";
         this.ctx.font = "20px 'Press Start 2P'";
         this.ctx.fillText(`POINTS: ${this.points}`, this.posX, this.posY);
+        this.ctx.font = "15px 'Press Start 2P'";
+        this.ctx.fillText(
+            `HIGHEST SCORE: ${game.highScore()}`,
+            this.posX,
+            this.posY + 30
+        );
     }
 }
