@@ -42,7 +42,7 @@ canvas {
 }
 
 /* PRE-LOAD FONTS */
-#preload-pacifico-font {
+/* #preload-pacifico-font {
     font-family: "Pacifico";
     opacity: 0;
     height: 0;
@@ -56,4 +56,4 @@ canvas {
     height: 0;
     width: 0;
     display: inline-block;
-}
+} */
