@@ -122,7 +122,7 @@ const game = {
             this.ctx.fillStyle = "white";
             this.ctx.font = "60px 'Pacifico'";
             this.ctx.fillText(
-                `Save the Turtles!`,
+                `Save the Turtle!`,
                 this.canvas.width / 2,
                 this.canvas.height / 2
             );
@@ -333,6 +333,10 @@ const game = {
             this.height,
             this.points
         );
+
+        obstaclesVel = 0;
+        obstaclesFallingVel = 0;
+        enemiesVel = 0;
 
         this.barsPosY = this.pointsBox.posY;
         this.life = new Life(this.ctx, this.width, this.height, this.barsPosY);
