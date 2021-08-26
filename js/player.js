@@ -62,10 +62,7 @@ class Player {
         this.gravity = 0.02;
     }
 
-    draw(framesCounter) {
-        //sprite changes to appear swimming
-        // this.swim(framesCounter);
-
+    draw() {
         switch (this.status) {
             case "medium":
                 this.ctx.drawImage(

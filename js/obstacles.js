@@ -52,13 +52,18 @@ class ObstacleFalling extends Obstacle {
 
         this.posX = this.randomX(this.gameWidth);
         this.posY = 0;
-        this.height = 100;
-        this.width = this.height;
+        this.height = 70;
+        this.width = this.height - 10;
         this.velY = 2;
         this.gravity = 0.2;
 
         this.image = new Image();
-        this.image.src = "./img/trash/trashbag.png";
+        this.image.src = this.randomImage();
+    }
+
+    randomImage() {
+        let i = Math.floor(Math.random() * game.obstaclesFallingImages.length);
+        return game.obstaclesFallingImages[i];
     }
 
     randomX(gameWidth) {
@@ -78,8 +83,7 @@ class ObstacleFalling extends Obstacle {
             this.width,
             this.height
         );
-        //this.ctx.fillStyle = "green";
-        // this.ctx.fillRect(this.posX, this.posY, this.width, this.height);
+
         this.fall();
     }
 }

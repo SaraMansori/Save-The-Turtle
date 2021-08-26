@@ -14,7 +14,7 @@ const game = {
     secondsCounter: 0,
     seconds: 0,
     points: 0,
-    previousHighScore: 0,
+    previousHighScore: localStorage.getItem("highScore") || 0,
     gameStarted: false,
 
     background: undefined,
@@ -56,6 +56,12 @@ const game = {
         "./img/trash/bottle2.png",
     ],
 
+    obstaclesFallingImages: [
+        "./img/trash/barrel2.png",
+        "./img/trash/barrel3.png",
+        "./img/trash/trash-bag.png",
+    ],
+
     keys: {
         UP: 38,
         DOWN: 40,
@@ -68,8 +74,6 @@ const game = {
     highScore() {
         let highScore = localStorage.getItem("highScore") || 0;
         localStorage.setItem("highScore", highScore);
-
-        this.previousHighScore = highScore;
 
         if (this.pointsBox.points > highScore) {
             highScore = parseInt(this.pointsBox.points);
@@ -129,7 +133,33 @@ const game = {
 
             //RECTANGLE
 
-            let rectangleHeight = 150;
+            let spaceKey = new Image();
+            spaceKey.src = "./img/controls/spacebar.png";
+            spaceKey.onload = () => {
+                this.ctx.drawImage(
+                    spaceKey,
+                    this.canvas.width / 2 - 152,
+                    this.canvas.height - rectangleHeight / 2 + 10,
+                    70,
+                    30
+                );
+            };
+
+            let arrowsKeys = new Image();
+            arrowsKeys.src = "./img/controls/arrows.png";
+            arrowsKeys.onload = () => {
+                this.ctx.drawImage(
+                    arrowsKeys,
+                    this.canvas.width / 2 - 140,
+                    this.canvas.height - rectangleHeight / 2 - 40,
+                    70,
+                    40
+                );
+            };
+
+            let rectangleHeight = this.canvas.height / 4;
+            let upperTextHeight = rectangleHeight / 4;
+
             this.ctx.fillStyle = "rgba(32, 28, 70, 0.7)";
             this.ctx.fillRect(
                 0,
@@ -137,31 +167,42 @@ const game = {
                 this.canvas.width,
                 rectangleHeight
             );
+
             this.ctx.fillStyle = "white";
             this.ctx.font = '15px "Press Start 2P"';
             this.ctx.strokeText(
-                `Use the arrows to avoid the garbage`,
+                `Use the        to avoid the garbage,`,
                 this.canvas.width / 2,
                 this.canvas.height - rectangleHeight / 2
             );
 
             this.ctx.font = '15px "Press Start 2P"';
             this.ctx.fillText(
-                `Use the arrows to avoid the garbage`,
+                `Use the        to avoid the garbage,`,
                 this.canvas.width / 2,
                 this.canvas.height - rectangleHeight / 2
             );
+
             this.ctx.font = '15px "Press Start 2P"';
             this.ctx.strokeText(
-                "and the space bar to attack with bubbles.",
+                "and the        to attack with bubbles.",
                 this.canvas.width / 2,
-                this.canvas.height - 50
+                this.canvas.height - rectangleHeight / 4
             );
             this.ctx.font = '15px "Press Start 2P"';
             this.ctx.fillText(
-                `and the space bar to attack with bubbles.`,
+                `and the        to attack with bubbles.`,
                 this.canvas.width / 2,
-                this.canvas.height - 50
+                this.canvas.height - rectangleHeight / 4
+            );
+
+            this.ctx.strokeStyle = "white";
+            this.ctx.lineWidth = 3;
+            this.ctx.strokeRect(
+                this.canvas.width / 2 - 200,
+                this.canvas.height / 2 + 18,
+                400,
+                50
             );
 
             this.ctx.font = '15px "Press Start 2P"';
@@ -178,12 +219,14 @@ const game = {
     start() {
         this.reset();
 
+        console.log(this.yearCounter);
+
         sounds.music.play();
         sounds.music.volume = 0.4;
         sounds.music.loop = true;
 
         this.interval = setInterval(() => {
-            //SACAR A FUNCIONES
+            console.log(this.previousHighScore);
 
             //To refresh the interval
             this.framesCounter > 5000
@@ -214,6 +257,7 @@ const game = {
     animateAll() {
         this.explosions.forEach((explosion) => explosion.animate());
         this.player.animate(this.framesCounter);
+        this.powerUps.forEach((powerUp) => powerUp.animate(this.framesCounter));
     },
 
     updateScore() {
@@ -334,9 +378,10 @@ const game = {
             this.points
         );
 
-        obstaclesVel = 0;
-        obstaclesFallingVel = 0;
-        enemiesVel = 0;
+        this.obstaclesVel = 180;
+        this.obstaclesFallingVel = 180;
+        this.enemiesVel = 240;
+        this.yearCounter = 0;
 
         this.barsPosY = this.pointsBox.posY;
         this.life = new Life(this.ctx, this.width, this.height, this.barsPosY);

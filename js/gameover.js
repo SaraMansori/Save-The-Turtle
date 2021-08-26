@@ -48,27 +48,35 @@ class GameOver {
         );
 
         if (game.highScore() > game.previousHighScore) {
+            this.ctx.font = "25px 'Press Start 2P'";
+            this.ctx.fillStyle = "#93e6ff";
             this.ctx.fillText(
                 `NEW HIGHEST SCORE: ${game.highScore()}`,
                 this.posX,
-                this.posY + 30
+                this.posY + 50
             );
-        } else {
+        }
+
+        if (game.highScore() <= game.previousHighScore) {
+            this.ctx.font = "15px 'Press Start 2P'";
+            this.ctx.fillStyle = "white";
             this.ctx.fillText(
-                `The high score is ${game.highScore()}`,
+                `The highest score is ${game.highScore()}`,
                 this.posX,
                 this.posY + 30
             );
         }
-        this.ctx.font = '25px "Press Start 2P"';
 
+        this.ctx.font = '25px "Press Start 2P"';
+        this.ctx.fillStyle = "white";
+        this.ctx.strokeStyle = "black";
         setTimeout(() => {
             //setInterval giving bugs
-            this.ctx.fillText("Click to Play again", this.posX, this.posY + 80);
+            this.ctx.fillText("Click to Play again", this.posX, this.posY + 90);
             this.ctx.strokeText(
                 "Click to Play again",
                 this.posX,
-                this.posY + 80
+                this.posY + 90
             );
         }, 1000);
     }

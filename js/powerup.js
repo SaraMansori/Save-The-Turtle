@@ -10,7 +10,10 @@ class PowerUp {
         this.velX = 3;
 
         this.image = new Image();
-        this.image.src = "./img/power-ups/power-up.png";
+        this.image.src = "./img/power-ups/power-up-sprite.png";
+
+        this.image.frames = 2;
+        this.image.framesIndex = 0;
     }
 
     randomY() {
@@ -18,11 +21,13 @@ class PowerUp {
     }
 
     draw() {
-        //this.ctx.fillStyle = "red";
-        //this.ctx.fillRect(this.posX, 100, 50, 50);
-
         this.ctx.drawImage(
             this.image,
+            this.image.framesIndex *
+                Math.floor(this.image.width / this.image.frames),
+            0,
+            Math.floor(this.image.width / this.image.frames),
+            this.image.height,
             this.posX,
             this.posY,
             this.width,
@@ -30,6 +35,15 @@ class PowerUp {
         );
 
         this.move();
+    }
+
+    animate(framesCounter) {
+        if (framesCounter % 30 === 0) {
+            this.image.framesIndex++;
+        }
+        if (this.image.framesIndex >= this.image.frames) {
+            this.image.framesIndex = 0;
+        }
     }
 
     move() {
