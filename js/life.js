@@ -16,6 +16,10 @@ class Life {
 
     colorHealth() {
         let percent = (this.health / this.maxHealth) * 100;
+        if (percent > 70) {
+            //green
+            this.color = "#66CC66";
+        }
         if (percent <= 70) {
             //yellows
             this.color = "#d6ed20";
@@ -28,10 +32,6 @@ class Life {
             //reds
             this.color = "#ff3d3d";
         }
-        if (percent > 70) {
-            //green
-            this.color = "#66CC66";
-        }
     }
 
     draw() {
@@ -40,7 +40,7 @@ class Life {
         this.ctx.fillRect(
             this.posX,
             this.posY - 6,
-            this.barWidth,
+            (400 / this.maxHealth) * this.health,
             this.barHeight + 12
         );
         this.ctx.font = "20px 'Press Start 2P'";
@@ -63,7 +63,6 @@ class Life {
 
     decreaseHealth(damage) {
         this.health -= damage;
-        this.barWidth = (this.health / this.maxHealth) * this.barMaxWidth;
     }
 
     increaseHealth(health) {
