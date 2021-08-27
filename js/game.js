@@ -230,7 +230,6 @@ const game = {
 
             this.updateScore();
             this.updateYear();
-            //this.updateDifficulty();
 
             this.clear();
             this.drawAll();
@@ -246,6 +245,7 @@ const game = {
             this.clearObstacles();
             this.clearEnemies();
             this.clearPowerUps();
+            this.clearAcid();
         }, 1000 / this.FPS);
     },
 
@@ -295,36 +295,37 @@ const game = {
         }
 
         if (this.isCollisionFalling()) {
-            this.player.makeSmall(this.player.status);
             if (this.player.status === "small") {
                 this.life.decreaseHealth(20);
-                this.clearHealthIndicator(this.obstacles, "obstacleFalling");
+                this.clearHealthIndicator(
+                    this.obstaclesFalling,
+                    "obstacleFalling"
+                );
                 sounds.damage.preload = "auto";
                 sounds.damage.load();
                 sounds.damage.play();
                 sounds.damage.volume = 0.3;
             }
+            this.player.makeSmall(this.player.status);
         }
 
         if (this.isCollisionEnemy()) {
-            this.player.makeSmall(this.player.status);
             if (this.player.status === "small") {
                 this.life.decreaseHealth(1);
-                this.clearHealthIndicator(this.obstacles, "enemy");
+                this.clearHealthIndicator(this.enemies, "enemy");
                 sounds.damage.preload = "auto";
                 sounds.damage.load();
                 sounds.damage.play();
                 sounds.damage.volume = 0.3;
             }
+            this.player.makeSmall(this.player.status);
         }
 
         if (this.isCollisionAcid()) {
-            this.player.makeSmall(this.player.status);
             if (this.player.status === "small") {
                 this.life.decreaseHealth(25);
-                this.clearHealthIndicator(this.obstacles, "acid");
-                this.acidBullets.forEach((bullet) => bullet.clearAcid());
             }
+            this.player.makeSmall(this.player.status);
             sounds.damage.preload = "auto";
             sounds.damage.load();
             sounds.damage.play();
@@ -529,6 +530,12 @@ const game = {
         );
     },
 
+    clearAcid() {
+        this.acidBullets = this.acidBullets.filter(
+            (acid) => acid.posX + acid.width >= 0
+        );
+    },
+
     clearPowerUps() {
         this.powerUps = this.powerUps.filter(
             (powerUp) =>
@@ -619,7 +626,7 @@ const game = {
     },
 
     isCollisionAcid() {
-        return this.acidBullets.some((acid) => {
+        return this.acidBullets.some((acid, i) => {
             const player = {
                 x: this.player.posX,
                 y: this.player.posY,
@@ -634,12 +641,18 @@ const game = {
                 height: acid.height,
             };
 
-            return (
+            if (
                 player.x < acidBullet.x + acidBullet.width &&
                 player.x + player.width > acidBullet.x &&
                 player.y < acidBullet.y + acidBullet.height &&
                 player.y + player.height > acidBullet.y
-            );
+            ) {
+                this.clearHealthIndicator(this.acidBullets, "acid");
+                this.acidBullets.splice(i, 1);
+                return true;
+            } else {
+                return false;
+            }
         });
     },
 
