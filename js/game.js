@@ -127,88 +127,22 @@ const game = {
             this.ctx.fillText(
                 `Save the Turtle!`,
                 this.canvas.width / 2,
-                this.canvas.height / 3
+                this.canvas.height / 2 - 30
             );
-
-            //RECTANGLE
-
-            let spaceKey = new Image();
-            spaceKey.src = "./img/controls/spacebar.png";
-            spaceKey.onload = () => {
-                this.ctx.drawImage(
-                    spaceKey,
-                    this.canvas.width / 2 - 152,
-                    this.canvas.height - rectangleHeight / 2 + 10,
-                    70,
-                    30
-                );
-            };
-
-            let arrowsKeys = new Image();
-            arrowsKeys.src = "./img/controls/arrows.png";
-            arrowsKeys.onload = () => {
-                this.ctx.drawImage(
-                    arrowsKeys,
-                    this.canvas.width / 2 - 140,
-                    this.canvas.height - rectangleHeight / 2 - 40,
-                    70,
-                    40
-                );
-            };
-
-            let rectangleHeight = this.canvas.height / 4;
-            let upperTextHeight = rectangleHeight / 4;
-
-            this.ctx.fillStyle = "rgba(32, 28, 70, 0.7)";
-            this.ctx.fillRect(
-                0,
-                Math.floor((this.canvas.height * 2) / 3) + 50,
-                this.canvas.width,
-                rectangleHeight
-            );
-
             this.ctx.fillStyle = "white";
-            this.ctx.font = '15px "Press Start 2P"';
-            this.ctx.strokeText(
-                `Use the        to avoid the garbage,`,
-                this.canvas.width / 2,
-                this.canvas.height - rectangleHeight / 2
-            );
-
-            this.ctx.font = '15px "Press Start 2P"';
-            this.ctx.fillText(
-                `Use the        to avoid the garbage,`,
-                this.canvas.width / 2,
-                this.canvas.height - rectangleHeight / 2
-            );
-
-            this.ctx.font = '15px "Press Start 2P"';
-            this.ctx.strokeText(
-                "and the        to attack with bubbles.",
-                this.canvas.width / 2,
-                this.canvas.height - rectangleHeight / 4
-            );
-            this.ctx.font = '15px "Press Start 2P"';
-            this.ctx.fillText(
-                `and the        to attack with bubbles.`,
-                this.canvas.width / 2,
-                this.canvas.height - rectangleHeight / 4
-            );
-
             this.ctx.strokeStyle = "white";
             this.ctx.lineWidth = 3;
             this.ctx.strokeRect(
                 this.canvas.width / 2 - 200,
-                this.canvas.height / 2 - 33,
+                this.canvas.height / 2,
                 400,
                 50
             );
-
             this.ctx.font = '15px "Press Start 2P"';
             this.ctx.fillText(
                 `Click to Play`,
                 this.canvas.width / 2,
-                this.canvas.height / 2
+                this.canvas.height / 2 + 32.5
             );
             this.ctx.textAlign = "left";
             this.ctx.fillStyle = "white";
