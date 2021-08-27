@@ -83,11 +83,4 @@ class Enemies {
             this.canShoot = true;
         }, 1000);
     }
-
-    clearAcid() {
-        game.acidBullets = game.acidBullets.filter(
-            (acid) => acid.posX <= game.gameWidth && !game.checkCollision(acid)
-        );
-        game.clearHealthIndicator(game.acidBullets, "acid");
-    }
 }

@@ -285,6 +285,7 @@ const game = {
         if (this.isCollision()) {
             if (this.player.status === "small") {
                 this.life.decreaseHealth(10);
+                this.clearHealthIndicator(this.obstacles, "obstacle");
                 sounds.damage.preload = "auto";
                 sounds.damage.load();
                 sounds.damage.play();
@@ -297,6 +298,7 @@ const game = {
             this.player.makeSmall(this.player.status);
             if (this.player.status === "small") {
                 this.life.decreaseHealth(20);
+                this.clearHealthIndicator(this.obstacles, "obstacleFalling");
                 sounds.damage.preload = "auto";
                 sounds.damage.load();
                 sounds.damage.play();
@@ -308,6 +310,7 @@ const game = {
             this.player.makeSmall(this.player.status);
             if (this.player.status === "small") {
                 this.life.decreaseHealth(1);
+                this.clearHealthIndicator(this.obstacles, "enemy");
                 sounds.damage.preload = "auto";
                 sounds.damage.load();
                 sounds.damage.play();
@@ -317,8 +320,11 @@ const game = {
 
         if (this.isCollisionAcid()) {
             this.player.makeSmall(this.player.status);
-            this.life.decreaseHealth(25);
-            this.enemies.forEach((enemy) => enemy.clearAcid());
+            if (this.player.status === "small") {
+                this.life.decreaseHealth(25);
+                this.clearHealthIndicator(this.obstacles, "acid");
+                this.acidBullets.forEach((bullet) => bullet.clearAcid());
+            }
             sounds.damage.preload = "auto";
             sounds.damage.load();
             sounds.damage.play();
@@ -362,6 +368,7 @@ const game = {
         this.powerUps = [];
         this.enemies = [];
         this.levelsBanners = [];
+        this.acidBullets = [];
         this.healthIndicators = [];
 
         this.framesCounter = 0;
@@ -504,14 +511,12 @@ const game = {
 
     clearObstacles() {
         this.clearExplosion(this.obstacles);
-        this.clearHealthIndicator(this.obstacles, "obstacle");
 
         this.obstacles = this.obstacles.filter(
             (obs) => obs.posX + obs.width >= 0 && !this.checkCollision(obs)
         );
 
         this.clearExplosion(this.obstaclesFalling);
-        this.clearHealthIndicator(this.obstaclesFalling, "obstacleFalling");
 
         this.obstaclesFalling = this.obstaclesFalling.filter(
             (obs) => obs.posY <= this.height && !this.checkCollision(obs)
@@ -519,14 +524,12 @@ const game = {
     },
 
     clearEnemies() {
-        this.clearHealthIndicator(this.enemies, "enemy");
         this.enemies = this.enemies.filter(
             (enemy) => enemy.posX + enemy.width >= 0
         );
     },
 
     clearPowerUps() {
-        this.clearHealthIndicator(this.powerUps, "powerUp");
         this.powerUps = this.powerUps.filter(
             (powerUp) =>
                 powerUp.posX + powerUp.width >= 0 &&

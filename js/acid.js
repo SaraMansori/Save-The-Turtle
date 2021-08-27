@@ -65,4 +65,11 @@ class Acid {
     move() {
         this.posX -= this.velX;
     }
+
+    clearAcid() {
+        game.acidBullets = game.acidBullets.filter(
+            (acid) => acid.posX <= game.gameWidth && !game.checkCollision(acid)
+        );
+        game.clearHealthIndicator(game.acidBullets, "acid");
+    }
 }
