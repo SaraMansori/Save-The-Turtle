@@ -5,4 +5,5 @@ const sounds = {
     gameOver: new Audio("./sounds/game-over.wav"),
     bonus: new Audio("./sounds/power-up.mp3"),
     damage: new Audio("./sounds/damage.wav"),
+    shield: new Audio("./sounds/shield-hit.wav")
 };

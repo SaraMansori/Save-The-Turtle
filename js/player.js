@@ -241,9 +241,11 @@ class Player {
                 break;
             case "medium":
                 this.status = "small";
+                sounds.shield.play()
                 break;
             case "large":
                 this.status = "medium";
+                sounds.shield.play()
         }
     }
 }

@@ -326,8 +326,8 @@ const game = {
                 this.life.decreaseHealth(25);
             }
             this.player.makeSmall(this.player.status);
-            sounds.damage.preload = "auto";
-            sounds.damage.load();
+            // sounds.damage.preload = "auto";
+            // sounds.damage.load();
             sounds.damage.play();
             sounds.damage.volume = 0.3;
         }
