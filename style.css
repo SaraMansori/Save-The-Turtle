@@ -6,6 +6,7 @@
 body {
     margin: 0;
     padding: 0;
+    color: white;
     font-family: "Press Start 2P", cursive;
     background: #171241; /* fallback for old browsers */
     background: -webkit-linear-gradient(
@@ -20,10 +21,14 @@ body {
         #302b63,
         #0f0c29
     ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    text-align: center;
+}
+
+.fontload {
+    display: none;
 }
 
 h1 {
-    color: black;
     font-family: "Pacifico", cursive;
     font-size: 64px;
     position: absolute;
@@ -43,7 +48,48 @@ canvas {
     padding: 6rem;
 }
 
-/* PRE-LOAD FONTS */
+.instructions {
+    display: flex;
+    width: 70%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.instructions-1,
+.instructions-2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+span {
+    font-size: 0.7rem;
+}
+
+img {
+    margin: 1rem;
+}
+
+.arrows,
+.space,
+.algae,
+.turtle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.turtle img,
+.algae img {
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+}
+
 #preload-pacifico-font {
     font-family: "Pacifico";
     opacity: 0;

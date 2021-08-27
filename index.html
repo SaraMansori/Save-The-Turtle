@@ -24,17 +24,51 @@
     </head>
     <body>
         <section class="game">
-            <div class="instructions">
-                <span>Use the </span>
-                <img
-                    width="20%"
-                    src="./img/controls/arrows.png"
-                    alt="arrows controls"
-                />
-            </div>
-            <div id="preload-font">.</div>
-            <div id="preload-pacifico-font">.</div>
+            <div id="preload-font" class="fontload">.</div>
+            <div id="preload-pacifico-font" class="fontload">.</div>
             <canvas id="myCanvas" style="border: 12px solid #ffffff"></canvas>
+            <div class="instructions">
+                <div class="instructions-1">
+                    <div class="arrows">
+                        <span>Use the </span>
+                        <img
+                            width="10%"
+                            src="./img/controls/arrows.png"
+                            alt="arrows controls"
+                        />
+                        <span>to avoid the garbage.</span>
+                    </div>
+                    <div class="space">
+                        <span>Use the </span>
+                        <img
+                            width="11%"
+                            src="./img/controls/spacebar.png"
+                            alt="spacebar"
+                        />
+                        <span>to shoot bubbles</span>
+                    </div>
+                </div>
+                <div class="instructions-2">
+                    <div class="algae">
+                        <span>Eat the </span>
+                        <img
+                            width="9%"
+                            src="./img/power-ups/power-up.png"
+                            alt="arrows controls"
+                        />
+                        <span>to regain health and shields!</span>
+                    </div>
+                    <div class="turtle">
+                        <span>Survive and save the </span>
+                        <img
+                            width="8%"
+                            src="./img/player/turtle.png "
+                            alt="spaceb ar"
+                        />
+                        <span>!</span>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <script src="./js/healthIndicators.js"></script>
